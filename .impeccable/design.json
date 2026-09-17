@@ -1,0 +1,416 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-18T00:00:00.000Z",
+  "title": "Design System: Framey",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Room Black",
+        "canonical": "oklch(0.145 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.87 0 0)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Panel Gray",
+        "canonical": "oklch(0.205 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.922 0 0)"
+        ]
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Raised Gray",
+        "canonical": "oklch(0.269 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.922 0 0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.985 0 0)",
+        "tonalRamp": [
+          "oklch(0.205 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.87 0 0)",
+          "oklch(0.922 0 0)",
+          "oklch(0.985 0 0)",
+          "oklch(1 0 0)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "oklch(0.708 0 0)",
+        "tonalRamp": [
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.87 0 0)",
+          "oklch(0.985 0 0)"
+        ]
+      },
+      "accent-light": {
+        "role": "primary",
+        "displayName": "Bright Paper",
+        "canonical": "oklch(0.922 0 0)",
+        "tonalRamp": [
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.87 0 0)",
+          "oklch(0.922 0 0)",
+          "oklch(0.985 0 0)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(1 0 0 / 10%)",
+        "tonalRamp": [
+          "oklch(1 0 0 / 4%)",
+          "oklch(1 0 0 / 8%)",
+          "oklch(1 0 0 / 10%)",
+          "oklch(1 0 0 / 15%)",
+          "oklch(1 0 0 / 20%)",
+          "oklch(1 0 0 / 30%)",
+          "oklch(1 0 0 / 50%)",
+          "oklch(1 0 0 / 70%)"
+        ]
+      },
+      "focus-ring": {
+        "role": "neutral",
+        "displayName": "Focus Gray",
+        "canonical": "oklch(0.556 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.87 0 0)"
+        ]
+      },
+      "destructive": {
+        "role": "tertiary",
+        "displayName": "Alarm Red",
+        "canonical": "oklch(0.704 0.191 22.216)",
+        "tonalRamp": [
+          "oklch(0.2 0.06 22.216)",
+          "oklch(0.32 0.1 22.216)",
+          "oklch(0.44 0.14 22.216)",
+          "oklch(0.577 0.245 27.325)",
+          "oklch(0.704 0.191 22.216)",
+          "oklch(0.8 0.12 22.216)",
+          "oklch(0.89 0.07 22.216)",
+          "oklch(0.96 0.02 22.216)"
+        ]
+      },
+      "daylight-ground": {
+        "role": "neutral",
+        "displayName": "Daylight Ground",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.922 0 0)",
+          "oklch(0.97 0 0)",
+          "oklch(1 0 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The marketing promise on the entry screen. Once per surface, if at all."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The same promise at mobile width, and section openers."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Dialog titles and field legends. Medium weight, never bold."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "System default: controls, labels, menu items, running text. 16px in inputs below md."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Filter names, slider readouts, helper text, counters. Usually Muted Ink."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Geist Mono, declared for numeric and technical readouts."
+      }
+    },
+    "shadows": [
+      {
+        "name": "seated-edge",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Inputs and outline buttons. Signals enterable, not elevated."
+      },
+      {
+        "name": "media-overlay",
+        "value": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+        "purpose": "Pills floating on a photo or video, paired with backdrop-blur-sm and bg-background/80. The only shadow that does real work."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Panel slide, dialog max-width growth, sidebar width. Always paired with motion-reduce:transition-none."
+      },
+      {
+        "name": "duration-overlay",
+        "value": "100ms",
+        "purpose": "Dialog fade + zoom-95 on open and close."
+      },
+      {
+        "name": "duration-guide",
+        "value": "150ms",
+        "purpose": "Rule-of-thirds grid fading in on drag and out on release."
+      },
+      {
+        "name": "duration-panel",
+        "value": "300ms",
+        "purpose": "Editor sidebar width and slide; its contents fade in at a 300ms delay so the panel arrives before its contents."
+      },
+      {
+        "name": "duration-field-message",
+        "value": "200ms",
+        "purpose": "Validation messages entering with fade-in slide-in-from-top-1."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "editor-offset", "value": "44rem" },
+      { "name": "editor-center", "value": "50rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one committing action on a surface. A lit rectangle in a dark room.",
+      "html": "<button class=\"ds-btn-primary\">Share</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 10px; gap: 6px; border: 1px solid transparent; border-radius: 8px; background: var(--primary, oklch(0.922 0 0)); color: var(--primary-foreground, oklch(0.205 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-btn-primary:hover { background: color-mix(in oklch, var(--primary, oklch(0.922 0 0)) 80%, transparent); } .ds-btn-primary:focus-visible { border-color: var(--ring, oklch(0.556 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Default for icon actions and toolbar controls. Invisible until touched.",
+      "html": "<button class=\"ds-btn-ghost\" aria-label=\"Back\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 12H5\"/><path d=\"m12 19-7-7 7-7\"/></svg></button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; height: 36px; min-width: 36px; padding: 0 10px; gap: 6px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--foreground, oklch(0.985 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-btn-ghost:hover { background: color-mix(in oklch, var(--muted, oklch(0.269 0 0)) 50%, transparent); } .ds-btn-ghost:focus-visible { border-color: var(--ring, oklch(0.556 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); } .ds-btn-ghost:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Destructive Button",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "Danger reads as a warning wash behind red text, never as a red fill competing for primary.",
+      "html": "<button class=\"ds-btn-destructive\">Discard</button>",
+      "css": ".ds-btn-destructive { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 10px; gap: 6px; border: 1px solid transparent; border-radius: 8px; background: color-mix(in oklch, var(--destructive, oklch(0.704 0.191 22.216)) 20%, transparent); color: var(--destructive, oklch(0.704 0.191 22.216)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-btn-destructive:hover { background: color-mix(in oklch, var(--destructive, oklch(0.704 0.191 22.216)) 30%, transparent); } .ds-btn-destructive:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive, oklch(0.704 0.191 22.216)) 40%, transparent); } .ds-btn-destructive:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Media Overlay Pill",
+      "kind": "button",
+      "refersTo": "button-overlay",
+      "description": "A control floating directly on a photo. Blur separates it from unpredictable media; the pill shape marks it as detached.",
+      "html": "<button class=\"ds-btn-overlay\" aria-label=\"Zoom\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/><path d=\"M11 8v6\"/><path d=\"M8 11h6\"/></svg></button>",
+      "css": ".ds-btn-overlay { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid transparent; border-radius: 9999px; background: color-mix(in oklch, var(--background, oklch(0.145 0 0)) 80%, transparent); backdrop-filter: blur(4px); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); color: var(--foreground, oklch(0.985 0 0)); transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-btn-overlay:hover { background: color-mix(in oklch, var(--background, oklch(0.145 0 0)) 92%, transparent); } .ds-btn-overlay:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); } .ds-btn-overlay:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "36px field with a 15%-white hairline. Focus shifts the border and adds a 3px halo; nothing reflows.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Username\" />",
+      "css": ".ds-input { display: block; height: 36px; width: 100%; min-width: 0; padding: 4px 10px; border: 1px solid var(--input, oklch(1 0 0 / 15%)); border-radius: 8px; background: color-mix(in oklch, var(--input, oklch(1 0 0 / 15%)) 30%, transparent); box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); color: var(--foreground, oklch(0.985 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 16px; transition: color 0.15s, box-shadow 0.15s; outline: none; } @media (min-width: 768px) { .ds-input { font-size: 14px; } } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.708 0 0)); } .ds-input:focus-visible { border-color: var(--ring, oklch(0.556 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: color-mix(in oklch, var(--destructive, oklch(0.704 0.191 22.216)) 50%, transparent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive, oklch(0.704 0.191 22.216)) 40%, transparent); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Line Tabs",
+      "kind": "nav",
+      "refersTo": "tab-trigger",
+      "description": "Panel navigation. No track, no pill: a 2px underline that fades in on the active trigger.",
+      "html": "<div class=\"ds-tabs\"><button class=\"ds-tab\" data-active=\"true\">Filters</button><button class=\"ds-tab\">Adjustments</button></div>",
+      "css": ".ds-tabs { display: inline-flex; align-items: center; gap: 4px; padding: 0 12px; background: transparent; } .ds-tab { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 4px 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--muted-foreground, oklch(0.708 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-tab::after { content: \"\"; position: absolute; left: 0; right: 0; bottom: -5px; height: 2px; background: var(--foreground, oklch(0.985 0 0)); opacity: 0; transition: opacity 0.15s; } .ds-tab:hover { color: var(--foreground, oklch(0.985 0 0)); } .ds-tab[data-active=\"true\"] { color: var(--foreground, oklch(0.985 0 0)); } .ds-tab[data-active=\"true\"]::after { opacity: 1; } .ds-tab:focus-visible { border-color: var(--ring, oklch(0.556 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); }"
+    },
+    {
+      "name": "Dialog Panel",
+      "kind": "card",
+      "refersTo": "dialog",
+      "description": "Panel Gray at 14px radius, no border, no shadow. Padding is horizontal-zero so media can run edge to edge inside it.",
+      "html": "<div class=\"ds-dialog\"><div class=\"ds-dialog-head\"><h2 class=\"ds-dialog-title\">Crop photo</h2><p class=\"ds-dialog-desc\">Drag to reposition. Pinch or scroll to zoom.</p></div></div>",
+      "css": ".ds-dialog { display: grid; gap: 24px; width: 100%; max-width: 420px; padding: 20px 0; border-radius: 14px; background: var(--popover, oklch(0.205 0 0)); color: var(--popover-foreground, oklch(0.985 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; outline: none; } .ds-dialog-head { display: flex; flex-direction: column; gap: 8px; padding: 0 20px; } .ds-dialog-title { margin: 0; font-size: 16px; font-weight: 500; line-height: 1; } .ds-dialog-desc { margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted-foreground, oklch(0.708 0 0)); }"
+    },
+    {
+      "name": "Adjustment Slider",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "The editor's adjustment language: label left, live numeric readout right, track beneath. The value is always visible.",
+      "html": "<div class=\"ds-slider\"><div class=\"ds-slider-head\"><span class=\"ds-slider-label\">Brightness</span><span class=\"ds-slider-value\">12</span></div><input class=\"ds-slider-input\" type=\"range\" min=\"-100\" max=\"100\" value=\"12\" /></div>",
+      "css": ".ds-slider { display: flex; flex-direction: column; gap: 12px; width: 240px; font-family: Inter, ui-sans-serif, system-ui, sans-serif; } .ds-slider-head { display: flex; align-items: center; justify-content: space-between; } .ds-slider-label { font-size: 14px; font-weight: 500; color: var(--foreground, oklch(0.985 0 0)); } .ds-slider-value { font-size: 12px; color: var(--muted-foreground, oklch(0.708 0 0)); font-variant-numeric: tabular-nums; } .ds-slider-input { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 9999px; background: var(--muted, oklch(0.269 0 0)); outline: none; cursor: pointer; } .ds-slider-input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 9999px; background: var(--foreground, oklch(0.985 0 0)); transition: transform 0.15s; } .ds-slider-input:hover::-webkit-slider-thumb { transform: scale(1.1); } .ds-slider-input:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); }"
+    },
+    {
+      "name": "Filter Thumbnail",
+      "kind": "chip",
+      "refersTo": null,
+      "description": "A filter preset rendered on the user's own image, never a stock swatch. Selected takes a Raised Gray fill.",
+      "html": "<button class=\"ds-filter\" data-selected=\"true\"><span class=\"ds-filter-thumb\"></span><span class=\"ds-filter-name\">clarendon</span></button>",
+      "css": ".ds-filter { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 84px; padding: 4px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--foreground, oklch(0.985 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-filter:hover { background: color-mix(in oklch, var(--muted, oklch(0.269 0 0)) 50%, transparent); } .ds-filter[data-selected=\"true\"] { background: var(--muted, oklch(0.269 0 0)); } .ds-filter-thumb { display: block; width: 100%; aspect-ratio: 1; border-radius: 8px; background: linear-gradient(135deg, oklch(0.45 0 0), oklch(0.72 0 0)); filter: brightness(1.05) contrast(1.2) saturate(1.35); } .ds-filter-name { font-size: 12px; text-transform: capitalize; } .ds-filter:focus-visible { border-color: var(--ring, oklch(0.556 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); }"
+    },
+    {
+      "name": "Thirds Guide Overlay",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Rule-of-thirds grid over the crop stage. Fades in only while dragging; a guide visible at rest is clutter on a photograph.",
+      "html": "<div class=\"ds-stage\"><div class=\"ds-guides\" data-dragging=\"true\"><span class=\"ds-guide-v\" style=\"left:33.333%\"></span><span class=\"ds-guide-v\" style=\"left:66.666%\"></span><span class=\"ds-guide-h\" style=\"top:33.333%\"></span><span class=\"ds-guide-h\" style=\"top:66.666%\"></span></div></div>",
+      "css": ".ds-stage { position: relative; width: 220px; aspect-ratio: 1; background: linear-gradient(135deg, oklch(0.3 0 0), oklch(0.55 0 0)); overflow: hidden; } .ds-guides { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.15s; } .ds-guides[data-dragging=\"true\"] { opacity: 1; } .ds-guide-v { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in oklch, var(--foreground, oklch(0.985 0 0)) 70%, transparent); } .ds-guide-h { position: absolute; left: 0; right: 0; height: 1px; background: color-mix(in oklch, var(--foreground, oklch(0.985 0 0)) 70%, transparent); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Darkroom",
+    "overview": "Framey's interface is a near-black room with the work lit from inside it. The application shell is achromatic from edge to edge — every color token in the system is an OKLCH gray with literally zero chroma — so the only saturated thing on any screen is the photograph or the video the user came to look at. The chrome is not shy for lack of ideas; it is dark so that a warm skin tone, a green field, a neon sign in someone's snapshot reads as the loudest thing in the viewport. Turn the chrome up and you turn the photo down.\n\nDepth is built the way light builds it in a dark room: by lifting a surface, not by casting a shadow. The ground sits at oklch(0.145), cards and dialogs step up to 0.205, the raised interior surfaces to 0.269, and the boundaries between them are 10%-white hairlines rather than strokes of solid color. Shadow exists in the codebase only as a whisper (shadow-xs) under inputs and outline buttons. Nothing in this system floats.\n\nControls are soft and unobtrusive by intent. They round at 10px, stand 36px tall, carry thin translucent borders, nudge down exactly one pixel when pressed, and answer focus with a 3px halo at half opacity. That is the full extent of the personality on a button; all remaining expressiveness is spent on the media surfaces — the crop stage, the thirds grid, the filter thumbnails, the pill overlays that hover on top of a photo without ever framing it.",
+    "keyCharacteristics": [
+      "Achromatic by doctrine: zero-chroma grays everywhere, destructive red the one exception",
+      "Dark-first — the dark class is on <html>, not on a toggle",
+      "Tonal layering instead of shadow: 0.145 → 0.205 → 0.269",
+      "Hairlines at 10% white, never solid borders",
+      "36px control height, 10px corner radius, 1px press displacement",
+      "Media meets its surface directly, with no frame, shadow, or decorative edge",
+      "One typeface (Inter) doing display through label work by weight and size alone"
+    ],
+    "rules": [
+      {
+        "name": "The Achromatic Chrome Rule",
+        "body": "Every interface color in Framey has zero chroma. If a new token needs a hue, the answer is no — unless it is communicating danger. The photograph is the only place color lives.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Lit Surface Rule",
+        "body": "Bright Paper appears once per view, on the single action that commits. A screen with two filled buttons has no primary action.",
+        "section": "colors"
+      },
+      {
+        "name": "The Relative Border Rule",
+        "body": "Borders are white at 10–15% opacity, never an opaque gray. A hairline must stay correct when the surface beneath it changes level.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Voice Rule",
+        "body": "Inter does every job. A second display face is not an upgrade to this system — it is a competing signal against the photo.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sixteen Pixel Rule",
+        "body": "Any text input renders at 16px below the md breakpoint. Smaller text in a field makes mobile Safari zoom the viewport and lose the user's place mid-form.",
+        "section": "typography"
+      },
+      {
+        "name": "The Stage Is Fixed Rule",
+        "body": "A panel that opens beside the work must not change the work's size. Grow the container by exactly the panel's width and let the stage keep its own; never let the stage take w-full of a container that is about to widen.",
+        "section": "layout"
+      },
+      {
+        "name": "The Edge-to-Edge Media Rule",
+        "body": "Dialogs and cards containing media carry no horizontal padding of their own. Padding is applied by the non-media children.",
+        "section": "layout"
+      },
+      {
+        "name": "The Lighter-Not-Darker Rule",
+        "body": "To raise a surface, increase its lightness one step on the ramp. Do not add a shadow. A shadow in this system means \"I am on top of media I cannot predict,\" and nothing else.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Scrim Stays Transparent Rule",
+        "body": "Modal backdrops blur at 10% opacity rather than dimming to black. The user must still see the image they were working on.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Honest Crop Rule",
+        "body": "The crop stage and any true media preview render with square corners. Rounding is chrome; the exported file has none of it.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Pill-For-Floating Rule",
+        "body": "rounded-full marks a control as detached and sitting on media. Never use a pill for a control that sits on a token surface.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Guides-On-Intent Rule",
+        "body": "Alignment aids (thirds grid, snap lines, handles) appear when the user is manipulating and disappear when they stop. A guide visible at rest is clutter drawn on top of a photograph.",
+        "section": "components"
+      },
+      {
+        "name": "The Own-Image Preview Rule",
+        "body": "Any preview of an effect renders the user's actual media. Never a generic sample.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do keep every new interface color at zero chroma. Alarm Red (oklch(0.704 0.191 22.216)) is the only hue the chrome is allowed.",
+      "Do build depth by stepping surface lightness — 0.145 → 0.205 → 0.269 — and separating with 10%-white hairlines.",
+      "Do give every media surface square corners and no frame. The photo touches the background directly.",
+      "Do render text inputs at 16px below md to stop iOS zoom, dropping to 14px above it.",
+      "Do keep controls at 36px (h-9) with an 8px radius, and let active:translate-y-px be the whole of the press feedback.",
+      "Do show a live numeric readout beside any slider.",
+      "Do pair every transition-* with motion-reduce:transition-none, as the editor's panel and the dialog's max-width already do.",
+      "Do preview filters and effects on the user's own image.",
+      "Do grow a container by exactly the width of the panel arriving inside it, and leave the stage's own size untouched."
+    ],
+    "donts": [
+      "Don't introduce gradients, glass cards, or glowing borders. The generic gradient-SaaS look is a confirmed anti-reference.",
+      "Don't introduce neon, saturated accents, or colored glows. Chrome color competes with the photographs and loses the product its point.",
+      "Don't wrap media in a thick frame, drop shadow, or decorative border.",
+      "Don't add a shadow to raise a surface. Raise it by lightness; shadow means \"floating over unpredictable media.\"",
+      "Don't darken a modal scrim to solid black — it blurs at 10% so the work stays visible behind it.",
+      "Don't add a second typeface. Inter carries display through label by weight alone.",
+      "Don't put two Bright Paper filled buttons in one view.",
+      "Don't leave alignment guides visible at rest; they belong to the drag, not to the layout.",
+      "Don't use opaque gray borders. Hairlines are white at 10–15% so they stay correct on any surface level."
+    ]
+  }
+}
