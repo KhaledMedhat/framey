@@ -79,3 +79,34 @@ export type PostAuthorPreview = {
   } | null;
   visibility: string;
 };
+
+export type FeedMedia = {
+  id: string;
+  url: string;
+  type: string | null;
+  width: number | null;
+  height: number | null;
+  alt: string | null;
+  cover: MediaCover | null;
+  muted: boolean;
+};
+
+/** A post as the feed renders it: author, ordered media, counts, viewer state. */
+export type FeedPost = {
+  id: string;
+  caption: string | null;
+  location: string | null;
+  /** ISO string: crosses the server/client boundary as plain JSON. */
+  createdAt: string;
+  hideComments: boolean;
+  hidePostInfo: boolean;
+  author: PostAuthorPreview;
+  media: FeedMedia[];
+  likeCount: number;
+  commentCount: number;
+  likedByMe: boolean;
+};
+
+export type FeedCursor = { createdAt: string; id: string };
+
+export type FeedPage = { posts: FeedPost[]; nextCursor: FeedCursor | null };

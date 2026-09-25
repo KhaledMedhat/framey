@@ -174,6 +174,8 @@ A single achromatic ramp, plus one red that only ever means danger.
 - **Hairline** (`oklch(1 0 0 / 10%)`): Every divider and container border. It is white at 10%, so it brightens as the surface under it lifts — the border is always a relationship, never a fixed gray.
 - **Input Hairline** (`oklch(1 0 0 / 15%)`): Field borders only, one step more present than a divider because a field must advertise that it is enterable.
 - **Focus Gray** (`oklch(0.556 0 0)`): The focus ring, rendered at 50% opacity across 3px.
+- **Inversion** (a pairing, not a token): Text selection and tooltips swap to an `Ink` ground with `Room Black` text. Outside `Bright Paper`, it is the only place the chrome goes light.
+- **Scrollbars**: Thin, with an `Input Hairline` thumb on a transparent track, so even the browser's own chrome stays in the room's grays.
 
 ### Tertiary
 
@@ -186,6 +188,8 @@ A single achromatic ramp, plus one red that only ever means danger.
 **The One Lit Surface Rule.** `Bright Paper` appears once per view, on the single action that commits. A screen with two filled buttons has no primary action.
 
 **The Relative Border Rule.** Borders are white at 10–15% opacity, never an opaque gray. A hairline must stay correct when the surface beneath it changes level.
+
+**The Lit Heart Rule.** An "on" state, such as a liked heart, fills its glyph with `Ink`. It never turns red or takes any other hue. `Alarm Red` keeps its one meaning: danger.
 
 ## Typography
 
@@ -230,6 +234,14 @@ and 28px (form field groups — `FieldGroup` uses `gap-7`). Dialogs pad `px-0` a
 rely on their children to inset, so a media surface can run edge to edge inside
 one.
 
+Signed-in pages share a fixed navigation shell. From `md` up, a 72px (`w-18`)
+icon rail is pinned to the left edge and the page is offset by the same amount
+(`md:pl-18`). Below `md`, a 56px (`h-14`) tab bar is pinned to the bottom, padded
+by `env(safe-area-inset-bottom)`, and the page reserves that height plus the inset.
+A surface that fills the viewport sizes itself to
+`100svh - 3.5rem - env(safe-area-inset-bottom)` on mobile and to `100svh` from `md`,
+so it never slides under the bar.
+
 Breakpoints are Tailwind defaults (`sm` 640, `md` 768, `lg` 1024, `xl` 1280), with
 two custom em-based queries on the profile-picture dialog (`max-[50rem]`,
 `min-[44rem]`) that govern how it offsets from center as it grows.
@@ -264,6 +276,7 @@ unpredictable photograph rather than a known token.
 
 - **Seated edge** (`shadow-xs`): Inputs and outline buttons. Signals enterable, not elevated.
 - **Media overlay** (`shadow-sm` + `backdrop-blur-sm` + `bg-background/80`): Controls floating on a photo or video. The blur, not the shadow, does the separating.
+- **Bloom lift** (`drop-shadow-lg`): Only on the double-tap like heart, which sits over media for 720ms.
 
 ### Named Rules
 
@@ -335,12 +348,36 @@ opacity is the only ring that exists.
 - **Style:** The `line` variant is the system default for panel navigation — transparent list, no pill, no track.
 - **States:** Inactive triggers are `Muted Ink`; hover lifts to `Ink`; active draws a 2px `foreground` underline via an `::after` that fades opacity rather than sliding.
 
+### Navigation
+
+- **Rail (from `md`):** Fixed at 72px on the `Room Black` ground, with a `Hairline` right border. From top to bottom it holds the Framey mark (32px), then the destination icons 8px apart, then Log out pinned to the bottom.
+- **Tab bar (below `md`):** 56px tall with a `Hairline` top border and the safe-area inset, holding the same items spaced evenly.
+- **Items:** 44px square (`size-11`) touch targets with a 10px radius (`rounded-lg`) and 24px icons. At rest they are `Muted Ink` with a 1.75 stroke. Hover lifts to `Ink` over a `muted/50` fill over 150ms. The active item turns `Ink` and thickens its stroke to 2.4, with no pill, bar, or fill. Focus shows the standard 3px halo.
+- **Labels:** Icon-only. On the rail, each icon has a right-side tooltip. Tooltips are inverted (`Ink` ground, `Room Black` 12px text, 6px radius) and open with a fade and `zoom-95`.
+- **Framey mark:** A vector redraw of the logo's frame and dot, with no wordmark, drawn in `currentColor` with a 1.75 stroke. Use it wherever the logo appears below wordmark size.
+- **Scope:** List only routes that exist.
+
 ### Sliders
 
 Sliders are the adjustment language of the editor: a label on the left, the live
 numeric value on the right in 12px `Muted Ink`, and the track beneath. The value
 readout is always visible — an adjustment the user cannot quantify is an
 adjustment they cannot undo by eye.
+
+### Media Overlay Pills
+
+All pills that float on media share one recipe: `rounded-full`, `bg-background/80`, `backdrop-blur-sm`, and `shadow-sm`, with `Ink` content. Each sits 12px in from the media edge.
+
+- **Icon pill:** 32px (`size-8`) with a 16px icon. Mute/unmute sits bottom-right. Carousel previous/next pills sit at the vertical center from `md` up, hidden until the media is hovered or the pill has focus, and fade over 150ms.
+- **Counter pill:** A non-interactive `1/3` in 12px medium tabular numerals, padded 10px by 4px, top-right. A polite live region announces the same position.
+- **Play badge:** 64px, centered, and non-interactive. It shows only while a video is paused.
+- The editor's 36px tool pills are the same recipe at control height.
+
+### Like Glyph
+
+- **Glyph:** A 28px outline icon with a 1.75 stroke, paired with a 14px medium tabular count (`text-sm font-medium tabular-nums`). Counts sit beside the glyph, or beneath it in a vertical stack.
+- **Press:** `active:scale-90` over 150ms. The liked state fills with `Ink` (see the Lit Heart Rule).
+- **Bloom:** Double-tapping media blooms a 96px filled `Ink` heart from the tap point. It overshoots to 1.12, settles, then drifts up and fades over 720ms on `cubic-bezier(0.16, 1, 0.3, 1)`. This is the system's only expressive motion. Under reduced motion it is not rendered at all.
 
 ### The Editor Stage (signature)
 
@@ -373,6 +410,7 @@ work should study before adding another.
 - **Do** pair every `transition-*` with `motion-reduce:transition-none`, as the editor's panel and the dialog's max-width already do.
 - **Do** preview filters and effects on the user's own image.
 - **Do** grow a container by exactly the width of the panel arriving inside it, and leave the stage's own size untouched.
+- **Do** mark an "on" glyph by filling it with `Ink` and, for the active nav item, thickening its stroke. Never color it.
 
 ### Don't:
 

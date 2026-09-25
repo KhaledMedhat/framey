@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { loginSchema, registerSchema } from "@/lib/validations";
+import { FEED_PATH } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type z from "zod";
@@ -11,16 +12,24 @@ import { Field, FieldGroup, FieldSeparator } from "../ui/field";
 import { Button } from "../ui/button";
 import RegisterForm from "./register-form";
 import LoginForm from "./login-form";
+import { toast } from "../ui/toast";
+import { useRegisterMutation, type ApiError } from "@/store/api";
 
 const LOGIN_FORM_ID = "login-form";
 const SIGNUP_FORM_ID = "signup-form";
 
-const FormsContainer = () => {
+/** `?error=` values NextAuth (or our signIn callback) redirects back with. */
+const AUTH_ERRORS: Record<string, string> = {
+  "use-password":
+    "An account with this email already exists. Log in with your email and password.",
+};
+
+const FormsContainer = ({ authError }: { authError?: string }) => {
   const router = useRouter();
   const [isLoginView, setIsLoginView] = useState<boolean>(true);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  //   const { mutate: registerMutation } = api.auth.register.useMutation();
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
+  const [register, { isLoading: isRegistering }] = useRegisterMutation();
+  const isSubmitting = isLoggingIn || isRegistering;
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -39,84 +48,65 @@ const FormsContainer = () => {
       lastName: "",
       username: "",
       email: "",
-      gender: undefined,
-      dateOfBirth: "",
       password: "",
       confirmPassword: "",
     },
   });
 
   const onLoginSubmit = async (data: z.infer<typeof loginSchema>) => {
-    console.log(data);
-    // setIsSubmitting(true);
+    setIsLoggingIn(true);
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      rememberMe: String(data.rememberMe),
+      redirect: false,
+    });
 
-    // const result = await signIn("credentials", {
-    //   email: data.email,
-    //   password: data.password,
-    //   redirect: false,
-    // });
+    if (result?.error) {
+      setIsLoggingIn(false);
+      toast.add({
+        type: "error",
+        description:
+          result.code === "rate_limited"
+            ? "Too many attempts. Please try again later."
+            : "Invalid email or password.",
+      });
+      return;
+    }
 
-    // if (result?.error) {
-    //   setIsSubmitting(false);
-    //   toast.add({
-    //     type: "error",
-    //     description: "Invalid email or password.",
-    //   });
-    //   return;
-    // } else {
-    //   const session = await getSession();
-    //   setIsSubmitting(false);
-    //   loginForm.reset();
-    //   router.push(`/${session?.user.slug}`);
-    // }
+    loginForm.reset();
+    router.push(FEED_PATH);
+    router.refresh();
   };
 
   const onRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
-    console.log(data);
-    // setIsSubmitting(true);
-    // const uploadedProfilePicture = await resizeAndUploadProfilePicture(data.profilePicture);
-    // if (uploadedProfilePicture?.error) {
-    //     setIsSubmitting(false);
-    //     toast.add({
-    //         type: "error",
-    //         description: uploadedProfilePicture.error.message,
-    //     })
-    //     return;
-    // }
-    // registerMutation({
-    //     ...data,
-    //     profilePicture: uploadedProfilePicture && uploadedProfilePicture.data?.ufsUrl ? {
-    //         url: uploadedProfilePicture?.data?.ufsUrl,
-    //         type: uploadedProfilePicture?.data?.type,
-    //         size: uploadedProfilePicture?.data?.size,
-    //         key: uploadedProfilePicture?.data?.key,
-    //     } : undefined,
-    // }, {
-    //     onSuccess: () => {
-    //         setIsLoginView(true);
-    //         registerForm.reset()
-    //         setIsSubmitting(false);
-    //         toast.add({
-    //             type: "success",
-    //             description: "Account created successfully 🎉.",
-    //         })
-    //     },
-    //     onError: (error) => {
-    //         if (error.message === ConflictCause.EMAIL_ADDRESS) {
-    //             registerForm.setError("email", { message: error.message });
-    //         }
-    //         else if (error.message === ConflictCause.USERNAME) {
-    //             registerForm.setError("username", { message: error.message });
-    //         } else {
-    //             toast.add({
-    //                 type: "error",
-    //                 description: error.message,
-    //             })
-    //         }
-    //         setIsSubmitting(false);
+    const result = await register({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+      profilePicture: data.profilePicture,
+    });
 
-    //     },
-    // });
+    if ("error" in result) {
+      const error = result.error as ApiError;
+      if (error.data?.errors?.length) {
+        for (const { field, message } of error.data.errors) {
+          registerForm.setError(field, { message });
+        }
+      } else {
+        toast.add({
+          type: "error",
+          description: error.data?.message ?? "Something went wrong.",
+        });
+      }
+      return;
+    }
+
+    registerForm.reset();
+    setIsLoginView(true);
+    toast.add({ type: "success", description: "Account created successfully 🎉." });
   };
 
   const onGoogleSignIn = async () => {
@@ -138,6 +128,11 @@ const FormsContainer = () => {
             {isLoginView ? "Login to Framey" : "Sign up to Framey"}
           </h2>
         </div>
+        {authError && (
+          <p role="alert" className="text-sm text-destructive">
+            {AUTH_ERRORS[authError] ?? "Sign-in failed. Please try again."}
+          </p>
+        )}
         {isLoginView ? (
           <LoginForm
             form={loginForm}

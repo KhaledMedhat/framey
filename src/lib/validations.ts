@@ -1,89 +1,75 @@
 import z from "zod";
-import { isAtLeast18YearsOld, isValidDate } from "@/lib/utils";
-import { Gender } from "@/interfaces/form.interface";
+
+/**
+ * Top-level paths that are (or will be) real routes. `/[slug]` serves
+ * profiles, so a user with one of these names would have an unreachable page.
+ */
+export const RESERVED_USERNAMES = new Set([
+  "_next", "about", "accounts", "admin", "api", "direct", "explore", "help",
+  "login", "logout", "me", "notifications", "onboarding", "p", "privacy",
+  "reel", "reels", "register", "search", "settings", "signin", "signup",
+  "stories", "terms",
+]);
 
 export const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
   rememberMe: z.boolean(),
 });
 
-const profileFieldsSchema = z.object({
-  username: z
+const usernameSchema = z
+  .string()
+  .trim()
+  .min(1, "Username is required")
+  .max(30, "Username cannot exceed 30 characters")
+  .regex(
+    /^[a-zA-Z0-9_]+$/,
+    "Username can only contain letters, numbers, and underscores (no spaces)",
+  )
+  .refine(
+    (username) => !RESERVED_USERNAMES.has(username.toLowerCase()),
+    "This username isn't available",
+  );
+
+// Letters from any script (Arabic, accents, ...) plus apostrophes, hyphens, spaces.
+const nameSchema = (label: string) =>
+  z
     .string()
     .trim()
-    .min(1, "Username is required")
+    .min(1, `${label} is required`)
+    .max(50, `${label} cannot exceed 50 characters`)
     .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Username can only contain letters, numbers, and underscores (no spaces)",
-    ),
-  gender: z.nativeEnum(Gender, { message: "Please select your gender" }),
-  dateOfBirth: z
-    .string()
-    .min(1, "Date of birth is required")
-    .refine((date) => isValidDate(new Date(date)), {
-      message: "Invalid date of birth",
-    })
-    .refine((date) => isAtLeast18YearsOld(new Date(date)), {
-      message: "You must be at least 18 years old",
-    }),
+      /^[\p{L}\p{M}' -]+$/u,
+      `${label} can only contain letters, spaces, apostrophes and hyphens`,
+    );
+
+const passwordSchema = z
+  .string()
+  .min(8, "Password cannot be less than 8 characters")
+  // Hashing cost grows with length; cap it so huge inputs can't tie up the server.
+  .max(128, "Password cannot exceed 128 characters");
+
+/** What the register API accepts. */
+export const registerInputSchema = z.object({
+  firstName: nameSchema("First name"),
+  lastName: nameSchema("Last name"),
+  email: z.email("Please enter a valid email address").max(255),
+  username: usernameSchema,
+  password: passwordSchema,
+  profilePicture: z
+    .instanceof(File)
+    .refine((file) => file.type.startsWith("image/"), "Profile picture must be an image")
+    .refine((file) => file.size <= 10 * 1024 * 1024, "Profile picture cannot exceed 10MB")
+    .optional(),
 });
 
-export const registerSchema = z
-  .object({
-    profilePicture: z.instanceof(File).optional(),
-    firstName: z
-      .string()
-      .min(1, "First name is required")
-      .regex(/^[A-Za-z]+$/, "First name can only contain alphabets"),
-    lastName: z
-      .string()
-      .min(1, "Last name is required")
-      .regex(/^[A-Za-z]+$/, "Last name can only contain alphabets"),
-    email: z.string().email().min(1, "Email is required"),
-    username: profileFieldsSchema.shape.username,
-    gender: profileFieldsSchema.shape.gender,
-    dateOfBirth: profileFieldsSchema.shape.dateOfBirth,
-    password: z
-      .string()
-      .min(1, "Password is required")
-      .min(8, "Password cannot be less than 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(1, "Confirm password is required")
-      .min(8, "Confirm password cannot be less than 8 characters"),
-  })
+/** The register form: the API input plus the confirmation field. */
+export const registerSchema = registerInputSchema
+  .extend({ confirmPassword: z.string().min(1, "Confirm password is required") })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-
-export const registerInputSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, "First name is required")
-    .regex(/^[A-Za-z]+$/, "First name can only contain alphabets"),
-  lastName: z
-    .string()
-    .min(1, "Last name is required")
-    .regex(/^[A-Za-z]+$/, "Last name can only contain alphabets"),
-  email: z.string().email().min(1, "Email is required"),
-  username: profileFieldsSchema.shape.username,
-  gender: profileFieldsSchema.shape.gender,
-  dateOfBirth: profileFieldsSchema.shape.dateOfBirth,
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(8, "Password cannot be less than 8 characters"),
-  profilePicture: z
-    .object({
-      url: z.string(),
-      type: z.string().optional(),
-      size: z.number().optional(),
-      key: z.string().optional(),
-    })
-    .optional(),
-});
 
 export const postImageAccessibilityItemSchema = z.object({
   alt: z
@@ -184,7 +170,7 @@ export const postUserListInputSchema = postListInputSchema.extend({
 });
 
 export const postIdInputSchema = z.string().uuid();
-export const completeProfileSchema = profileFieldsSchema;
+export const completeProfileSchema = z.object({ username: usernameSchema });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;

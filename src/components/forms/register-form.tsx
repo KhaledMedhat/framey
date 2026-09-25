@@ -1,35 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch, type UseFormReturn } from "react-hook-form";
 import type z from "zod";
-import { CalendarSearch3, Eye, EyeOff, X } from "reicon-react";
+import { Eye, EyeOff, X } from "reicon-react";
 import { registerSchema } from "@/lib/validations";
 import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Dialog, DialogContent } from "../ui/dialog";
-import { Gender } from "@/interfaces/form.interface";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
   InputGroup,
   InputGroupAddon,
-  InputGroupButton,
   InputGroupInput,
 } from "../ui/input-group";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { cn } from "cn";
-import { formatDate } from "@/lib/utils";
-import { Calendar } from "../ui/calendar";
 import { ImageEditor } from "../editors/image-editor";
 
 function ProfilePicturePreview({
@@ -39,35 +26,20 @@ function ProfilePicturePreview({
   file: File | undefined;
   form: UseFormReturn<z.infer<typeof registerSchema>>;
 }) {
-  const [src, setSrc] = useState<string>();
-  // useWatch, not form.watch(): the React Compiler memoizes render-time
-  // form.watch() calls and never refreshes them.
-  const gender = useWatch({ control: form.control, name: "gender" });
-
+  // Derived from `file`, so no state; the effect only frees the old URL.
+  const src = useMemo(
+    () => (file instanceof File ? URL.createObjectURL(file) : undefined),
+    [file],
+  );
   useEffect(() => {
-    if (!(file instanceof File)) {
-      setSrc(undefined);
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(file);
-    setSrc(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [file]);
+    if (src) return () => URL.revokeObjectURL(src);
+  }, [src]);
 
   return (
     <div className="relative w-full flex justify-center">
       <Avatar size="xl">
         <AvatarImage
-          src={
-            src
-              ? src
-              : !gender
-                ? "/male_vector_placeholder.jpg"
-                : gender === Gender.MALE
-                  ? "/male_vector_placeholder.jpg"
-                  : "/female_vector_placeholder.jpg"
-          }
+          src={src ? src : "/male_vector_placeholder.jpg"}
           alt={file?.name ?? "Avatar"}
         />
         <AvatarFallback>{file?.name || "Avatar"}</AvatarFallback>
@@ -96,16 +68,12 @@ const RegisterForm: React.FC<{
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
   const [openProfilePictureEditor, setOpenProfilePictureEditor] =
     useState<boolean>(false);
   // useWatch, not form.watch(): the React Compiler memoizes render-time
   // form.watch() calls and never refreshes them.
   const values = useWatch({ control: form.control });
-  const genderItems = [
-    { label: "Male", value: Gender.MALE },
-    { label: "Female", value: Gender.FEMALE },
-  ];
+
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       requestAnimationFrame(() => setVisible(true));
@@ -159,7 +127,9 @@ const RegisterForm: React.FC<{
         <Controller
           name="profilePicture"
           control={form.control}
-          disabled={isRegistering || values.profilePicture !== undefined}
+          // Not `disabled` here: RHF drops disabled fields from the submitted
+          // values, so the picture would never reach the server. The <Input>
+          // below disables itself instead.
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="w-full">
               <FieldLabel htmlFor="profilePicture">Profile Picture</FieldLabel>
@@ -301,120 +271,6 @@ const RegisterForm: React.FC<{
             </Field>
           )}
         />
-        <div className="flex gap-3">
-          <Controller
-            name="gender"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                className="min-w-0 flex-1"
-              >
-                <FieldLabel htmlFor="gender">
-                  Gender <span className="text-destructive">*</span>
-                </FieldLabel>
-                <Select
-                  disabled={isRegistering}
-                  items={genderItems}
-                  name={field.name}
-                  value={field.value ?? null}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger className="h-11!">
-                    <SelectValue placeholder="Select a gender" />
-                  </SelectTrigger>
-                  <SelectContent alignItemWithTrigger>
-                    <SelectGroup>
-                      {genderItems.map((item) => (
-                        <SelectItem key={item.value} value={item.value}>
-                          {item.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                {fieldState.invalid && (
-                  <FieldError
-                    className="animate-in fade-in slide-in-from-top-1 duration-200"
-                    errors={[fieldState.error]}
-                  />
-                )}
-              </Field>
-            )}
-          />
-          <Controller
-            name="dateOfBirth"
-            control={form.control}
-            disabled={isRegistering}
-            render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                className="min-w-0 flex-1"
-              >
-                <FieldLabel htmlFor="dateOfBirth">
-                  Date of Birth <span className="text-destructive">*</span>
-                </FieldLabel>
-                <InputGroup className="h-11!">
-                  <InputGroupInput
-                    id="date-required"
-                    {...field}
-                    value={field.value?.toString()}
-                    placeholder={formatDate(new Date())}
-                    onChange={(e) => {
-                      field.onChange(e.target.value);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "ArrowDown") {
-                        e.preventDefault();
-                        setOpen(true);
-                      }
-                    }}
-                  />
-                  <InputGroupAddon align="inline-end">
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger
-                        render={
-                          <InputGroupButton
-                            disabled={isRegistering}
-                            id="date-picker"
-                            variant="ghost"
-                            size="icon-xs"
-                            aria-label="Select date"
-                          >
-                            <CalendarSearch3 />
-                            <span className="sr-only">Select date</span>
-                          </InputGroupButton>
-                        }
-                      />
-                      <PopoverContent
-                        className="w-auto overflow-hidden p-0"
-                        align="end"
-                        alignOffset={-8}
-                        sideOffset={10}
-                      >
-                        <Calendar
-                          captionLayout="dropdown"
-                          mode="single"
-                          onSelect={(date) => {
-                            field.onChange(formatDate(date));
-                            setOpen(false);
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </InputGroupAddon>
-                </InputGroup>
-                {fieldState.invalid && (
-                  <FieldError
-                    className="animate-in fade-in slide-in-from-top-1 duration-200"
-                    errors={[fieldState.error]}
-                  />
-                )}
-              </Field>
-            )}
-          />
-        </div>
-
         <Controller
           name="password"
           control={form.control}
@@ -520,8 +376,6 @@ const RegisterForm: React.FC<{
             values.firstName === "" ||
             values.lastName === "" ||
             values.email === "" ||
-            values.gender === null ||
-            values.dateOfBirth === "" ||
             values.password === "" ||
             values.confirmPassword === ""
           }

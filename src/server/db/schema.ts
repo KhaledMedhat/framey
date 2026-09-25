@@ -6,11 +6,20 @@ import {
   uniqueIndex,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
-import type { MediaCover, MediaTag, PhotoTag } from "@/interfaces/post.interface";
+import type {
+  MediaCover,
+  MediaTag,
+  PhotoTag,
+} from "@/interfaces/post.interface";
 import type { ProfilePicture } from "@/interfaces/user.interface";
 import { AccountVisibility } from "@/interfaces/general.interface";
 
-type AdapterAccountType = "oauth" | "oidc" | "email" | "webauthn" | "credentials";
+type AdapterAccountType =
+  | "oauth"
+  | "oidc"
+  | "email"
+  | "webauthn"
+  | "credentials";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -163,8 +172,6 @@ export const users = createTable(
     email: d.varchar({ length: 255 }).notNull(),
     username: d.varchar({ length: 255 }).notNull().unique(),
     bio: d.text(),
-    gender: d.varchar({ length: 255 }),
-    dateOfBirth: d.timestamp({ mode: "date", withTimezone: true }),
     password: d.varchar({ length: 255 }),
     emailVerified: d.timestamp({
       mode: "date",
@@ -177,7 +184,6 @@ export const users = createTable(
       .$type<AccountVisibility>()
       .notNull()
       .default(AccountVisibility.PUBLIC),
-    slug: d.varchar({ length: 255 }).default("@me"),
   }),
   (t) => [uniqueIndex("user_email_idx").on(t.email)],
 );
@@ -211,7 +217,7 @@ export const accounts = createTable(
     userId: d
       .varchar({ length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: d.varchar({ length: 255 }).$type<AdapterAccountType>().notNull(),
     provider: d.varchar({ length: 255 }).notNull(),
     providerAccountId: d.varchar({ length: 255 }).notNull(),
@@ -236,16 +242,19 @@ export const postMediaRelations = relations(postMedia, ({ one }) => ({
   }),
 }));
 
-export const postCollaboratorsRelations = relations(postCollaborators, ({ one }) => ({
-  post: one(posts, {
-    fields: [postCollaborators.postId],
-    references: [posts.id],
+export const postCollaboratorsRelations = relations(
+  postCollaborators,
+  ({ one }) => ({
+    post: one(posts, {
+      fields: [postCollaborators.postId],
+      references: [posts.id],
+    }),
+    user: one(users, {
+      fields: [postCollaborators.userId],
+      references: [users.id],
+    }),
   }),
-  user: one(users, {
-    fields: [postCollaborators.userId],
-    references: [users.id],
-  }),
-}));
+);
 
 export const postLikesRelations = relations(postLikes, ({ one }) => ({
   user: one(users, {
@@ -258,24 +267,27 @@ export const postLikesRelations = relations(postLikes, ({ one }) => ({
   }),
 }));
 
-export const postCommentsRelations = relations(postComments, ({ one, many }) => ({
-  post: one(posts, {
-    fields: [postComments.postId],
-    references: [posts.id],
+export const postCommentsRelations = relations(
+  postComments,
+  ({ one, many }) => ({
+    post: one(posts, {
+      fields: [postComments.postId],
+      references: [posts.id],
+    }),
+    author: one(users, {
+      fields: [postComments.authorId],
+      references: [users.id],
+    }),
+    parent: one(postComments, {
+      fields: [postComments.parentId],
+      references: [postComments.id],
+      relationName: "commentReplies",
+    }),
+    replies: many(postComments, {
+      relationName: "commentReplies",
+    }),
   }),
-  author: one(users, {
-    fields: [postComments.authorId],
-    references: [users.id],
-  }),
-  parent: one(postComments, {
-    fields: [postComments.parentId],
-    references: [postComments.id],
-    relationName: "commentReplies",
-  }),
-  replies: many(postComments, {
-    relationName: "commentReplies",
-  }),
-}));
+);
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
   author: one(users, {
@@ -322,7 +334,7 @@ export const sessions = createTable(
     userId: d
       .varchar({ length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     expires: d.timestamp({ mode: "date", withTimezone: true }).notNull(),
   }),
   (t) => [index("t_user_id_idx").on(t.userId)],

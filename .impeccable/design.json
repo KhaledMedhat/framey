@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-18T00:00:00.000Z",
+  "generatedAt": "2026-09-24T00:00:00.000Z",
   "title": "Design System: Framey",
   "extensions": {
     "colorMeta": {
@@ -191,6 +191,11 @@
         "name": "media-overlay",
         "value": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
         "purpose": "Pills floating on a photo or video, paired with backdrop-blur-sm and bg-background/80. The only shadow that does real work."
+      },
+      {
+        "name": "bloom-lift",
+        "value": "drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))",
+        "purpose": "The double-tap like heart over media only."
       }
     ],
     "motion": [
@@ -218,15 +223,48 @@
         "name": "duration-field-message",
         "value": "200ms",
         "purpose": "Validation messages entering with fade-in slide-in-from-top-1."
+      },
+      {
+        "name": "duration-control",
+        "value": "150ms",
+        "purpose": "Color, opacity and press transitions on controls (nav items, overlay pill reveal, like press)."
+      },
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The heart bloom."
+      },
+      {
+        "name": "heart-bloom",
+        "value": "720ms",
+        "purpose": "Double-tap like: 0.4 -> 1.12 -> 0.96 -> 1 scale, then drift up and fade. The only expressive motion; not rendered under reduced motion."
       }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" },
-      { "name": "md", "value": "768px" },
-      { "name": "lg", "value": "1024px" },
-      { "name": "xl", "value": "1280px" },
-      { "name": "editor-offset", "value": "44rem" },
-      { "name": "editor-center", "value": "50rem" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "editor-offset",
+        "value": "44rem"
+      },
+      {
+        "name": "editor-center",
+        "value": "50rem"
+      }
     ]
   },
   "components": [
@@ -277,6 +315,14 @@
       "description": "Panel navigation. No track, no pill: a 2px underline that fades in on the active trigger.",
       "html": "<div class=\"ds-tabs\"><button class=\"ds-tab\" data-active=\"true\">Filters</button><button class=\"ds-tab\">Adjustments</button></div>",
       "css": ".ds-tabs { display: inline-flex; align-items: center; gap: 4px; padding: 0 12px; background: transparent; } .ds-tab { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 4px 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--muted-foreground, oklch(0.708 0 0)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; transition: all 0.15s cubic-bezier(0, 0, 0.2, 1); outline: none; cursor: pointer; } .ds-tab::after { content: \"\"; position: absolute; left: 0; right: 0; bottom: -5px; height: 2px; background: var(--foreground, oklch(0.985 0 0)); opacity: 0; transition: opacity 0.15s; } .ds-tab:hover { color: var(--foreground, oklch(0.985 0 0)); } .ds-tab[data-active=\"true\"] { color: var(--foreground, oklch(0.985 0 0)); } .ds-tab[data-active=\"true\"]::after { opacity: 1; } .ds-tab:focus-visible { border-color: var(--ring, oklch(0.556 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); }"
+    },
+    {
+      "name": "Navigation Rail",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "72px icon rail. Muted Ink at rest; the active item turns Ink and thickens its stroke, with no pill or bar.",
+      "html": "<nav class=\"ds-rail\"><a class=\"ds-rail-item\" data-active=\"true\" aria-label=\"Feed\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg></a><a class=\"ds-rail-item\" aria-label=\"Profile\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"8\" r=\"5\"/><path d=\"M20 21a8 8 0 0 0-16 0\"/></svg></a></nav>",
+      "css": ".ds-rail { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 72px; padding: 20px 0; background: var(--background, oklch(0.145 0 0)); border-right: 1px solid var(--border, oklch(1 0 0 / 10%)); } .ds-rail-item { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 10px; color: var(--muted-foreground, oklch(0.708 0 0)); transition: color 0.15s, background-color 0.15s; outline: none; cursor: pointer; } .ds-rail-item:hover { color: var(--foreground, oklch(0.985 0 0)); background: color-mix(in oklch, var(--muted, oklch(0.269 0 0)) 50%, transparent); } .ds-rail-item[data-active=\"true\"] { color: var(--foreground, oklch(0.985 0 0)); } .ds-rail-item:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.556 0 0)) 50%, transparent); }"
     },
     {
       "name": "Dialog Panel",
@@ -340,6 +386,11 @@
         "section": "colors"
       },
       {
+        "name": "The Lit Heart Rule",
+        "body": "An \"on\" state, such as a liked heart, fills its glyph with Ink. It never turns red or takes any other hue. Alarm Red keeps its one meaning: danger.",
+        "section": "colors"
+      },
+      {
         "name": "The Single Voice Rule",
         "body": "Inter does every job. A second display face is not an upgrade to this system — it is a competing signal against the photo.",
         "section": "typography"
@@ -399,7 +450,8 @@
       "Do show a live numeric readout beside any slider.",
       "Do pair every transition-* with motion-reduce:transition-none, as the editor's panel and the dialog's max-width already do.",
       "Do preview filters and effects on the user's own image.",
-      "Do grow a container by exactly the width of the panel arriving inside it, and leave the stage's own size untouched."
+      "Do grow a container by exactly the width of the panel arriving inside it, and leave the stage's own size untouched.",
+      "Do mark an \"on\" glyph by filling it with Ink and, for the active nav item, thickening its stroke. Never color it."
     ],
     "donts": [
       "Don't introduce gradients, glass cards, or glowing borders. The generic gradient-SaaS look is a confirmed anti-reference.",

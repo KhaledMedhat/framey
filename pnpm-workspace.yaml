@@ -1,5 +1,6 @@
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: false
   ffmpeg-static: true
+  msgpackr-extract: false
   sharp: false
   unrs-resolver: false

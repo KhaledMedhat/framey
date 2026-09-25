@@ -3,7 +3,6 @@ import OnboardingForm from "@/components/forms/onboarding-form";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@/server/auth";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 
 export default async function Home({
   searchParams,
@@ -11,18 +10,12 @@ export default async function Home({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const session = await auth();
-  const params = await searchParams;
-
-  if (
-    session?.user &&
-    !session.user.profileComplete &&
-    (params.pc !== "false" || params.obid !== session.user.id)
-  ) {
-    redirect(`/?pc=${session.user.profileComplete}&obid=${session.user.id}`);
-  }
-
-  const isProfileNotCompleted = params.pc === "false";
-  const isOnboardingId = params.obid === session?.user.id;
+  const { error } = await searchParams;
+  // Signed-in users with a finished profile never get here: the proxy sends
+  // them to the feed.
+  const isOnboarding = Boolean(
+    session?.user?.id && !session.user.profileComplete,
+  );
   return (
     <main className="relative grid min-h-svh lg:grid-cols-2">
       <div className="relative hidden min-h-svh overflow-hidden lg:block">
@@ -71,10 +64,12 @@ export default async function Home({
               height={100}
               className="h-auto w-12"
             />
-            {isProfileNotCompleted && isOnboardingId ? (
+            {isOnboarding ? (
               <OnboardingForm />
             ) : (
-              <FormsContainer />
+              <FormsContainer
+                authError={typeof error === "string" ? error : undefined}
+              />
             )}
             <p className="text-[0.8125rem] leading-snug text-muted-foreground">
               Capture the moments that matter.

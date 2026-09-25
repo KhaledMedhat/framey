@@ -2,7 +2,7 @@
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { cn } from "cn"
-import { CheckIcon } from "lucide-react"
+import { Check as CheckIcon } from "reicon-react"
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (
@@ -19,6 +19,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
         className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
       >
         <CheckIcon
+          aria-hidden
         />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

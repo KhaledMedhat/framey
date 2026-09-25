@@ -118,6 +118,7 @@ const LoginForm: React.FC<{
               {...field}
               id="rememberMe"
               value={field.value ? "true" : "false"}
+              checked={field.value}
               onCheckedChange={field.onChange}
             />
             <FieldLabel htmlFor="rememberMe">Remember me</FieldLabel>

@@ -1,9 +1,10 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+// One class-merging implementation: the `cn` package (clsx + tailwind-merge in
+// one). Re-exported so shadcn-generated components importing it from here work.
+export { cn } from "cn";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+/** Signed-in home: `/[slug]` renders the current user's feed for this value. */
+export const FEED_SLUG = "@me";
+export const FEED_PATH = `/${FEED_SLUG}`;
 
 /**
  * Checks if a date is valid
