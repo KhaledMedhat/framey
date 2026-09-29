@@ -1,10 +1,14 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "reicon-react";
 
 import { getFullName } from "@/lib/utils";
+import type { Translate } from "@/lib/i18n";
 import { auth } from "@/server/auth";
 import { getFeedPage, getSuggestedAccounts } from "@/server/feed";
+import { getT } from "@/server/i18n";
+import { getStoryTray } from "@/server/stories";
+import { ChatLauncher } from "./chat";
 import FeedStream from "./feed-stream";
+import { StoryTray } from "./stories";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { SwitchAccountDialog } from "./switch-account";
 
@@ -14,26 +18,37 @@ export default async function Feed() {
   const session = await auth();
   // The proxy guarantees a signed-in user here.
   const viewer = session!.user;
-  const [page, suggestions] = await Promise.all([
+  const [t, page, suggestions, reels] = await Promise.all([
+    getT(),
     getFeedPage(viewer.id),
     getSuggestedAccounts(viewer.id),
+    getStoryTray(viewer.id),
   ]);
 
   return (
     <div className="flex">
-      <h1 className="sr-only">Feed</h1>
-      <div className="min-w-0 flex-1">
+      <h1 className="sr-only">{t("feed")}</h1>
+      <div className="flex h-[calc(100svh-3.5rem-env(safe-area-inset-bottom))] min-w-0 flex-1 flex-col md:h-svh">
+        <StoryTray
+          reels={reels}
+          me={{
+            id: viewer.id,
+            username: viewer.username,
+            profilePicture: viewer.profilePicture,
+          }}
+        />
         {page.posts.length ? (
-          <FeedStream initial={page} />
+          // Remount when a new post lands on top (e.g. after sharing one).
+          <FeedStream key={page.posts[0]?.id} initial={page} />
         ) : (
-          <EmptyFeed suggestions={suggestions} />
+          <EmptyFeed suggestions={suggestions} t={t} />
         )}
       </div>
 
       {/* From 1440px only: below that the full-height post outranks the rail. */}
       <aside
-        aria-label="You and suggestions"
-        className="sticky top-0 hidden h-svh w-80 shrink-0 flex-col gap-10 border-l px-6 py-8 min-[90rem]:flex"
+        aria-label={t("youAndSuggestions")}
+        className="sticky top-0 hidden h-svh w-80 shrink-0 flex-col gap-10 border-s px-6 py-8 min-[90rem]:flex"
       >
         <div className="flex items-center gap-3">
           <Link
@@ -59,8 +74,9 @@ export default async function Feed() {
             </span>
           </Link>
           <SwitchAccountDialog
+            className="text-xs"
             switchAccountButtonVariant="link"
-            switchAccountButtonLabel="Switch"
+            switchAccountButtonLabel={t("switch")}
           />
         </div>
 
@@ -73,50 +89,17 @@ export default async function Feed() {
               id="suggested-heading"
               className="text-sm font-medium text-muted-foreground"
             >
-              Suggested for you
+              {t("suggestedForYou")}
             </h2>
             <AccountList accounts={suggestions} />
           </section>
         )}
 
-        <section
-          aria-labelledby="keys-heading"
-          className="mt-auto flex flex-col gap-3 text-xs text-muted-foreground"
-        >
-          <h2 id="keys-heading" className="sr-only">
-            Keyboard shortcuts
-          </h2>
-          <Shortcut
-            keys={[
-              ["J", "J"],
-              ["K", "K"],
-            ]}
-            label="Next and previous post"
-          />
-          <Shortcut
-            keys={[
-              [
-                "left",
-                <ArrowLeft
-                  key="l"
-                  className="size-3"
-                  aria-label="Left arrow"
-                />,
-              ],
-              [
-                "right",
-                <ArrowRight
-                  key="r"
-                  className="size-3"
-                  aria-label="Right arrow"
-                />,
-              ],
-            ]}
-            label="Photos in a post"
-          />
-          <p>Double-click a photo to like it.</p>
-        </section>
+        <div className="mt-auto">
+          <ChatLauncher variant="pill" />
+        </div>
       </aside>
+      <ChatLauncher variant="fab" />
     </div>
   );
 }
@@ -154,40 +137,21 @@ function AccountList({ accounts }: { accounts: Account[] }) {
   );
 }
 
-function Shortcut({
-  keys,
-  label,
+function EmptyFeed({
+  suggestions,
+  t,
 }: {
-  keys: [id: string, glyph: React.ReactNode][];
-  label: string;
+  suggestions: Account[];
+  t: Translate;
 }) {
   return (
-    <p className="flex items-center gap-3">
-      <span className="flex gap-1">
-        {keys.map(([id, glyph]) => (
-          <kbd
-            key={id}
-            className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border px-1.5 font-sans text-xs text-foreground"
-          >
-            {glyph}
-          </kbd>
-        ))}
-      </span>
-      {label}
-    </p>
-  );
-}
-
-function EmptyFeed({ suggestions }: { suggestions: Account[] }) {
-  return (
-    <div className="flex h-[calc(100svh-3.5rem-env(safe-area-inset-bottom))] flex-col items-center justify-center gap-8 px-6 md:h-svh">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-8 px-6">
       <div className="flex max-w-sm flex-col gap-3 text-center">
         <h2 className="text-2xl font-bold tracking-tight text-balance">
-          Nothing in your feed yet
+          {t("emptyFeedTitle")}
         </h2>
         <p className="text-sm text-muted-foreground text-pretty">
-          Posts from you and the people you follow land here, one full frame at
-          a time.
+          {t("emptyFeedBody")}
         </p>
       </div>
       {suggestions.length > 0 && (
@@ -199,7 +163,7 @@ function EmptyFeed({ suggestions }: { suggestions: Account[] }) {
             id="empty-suggested"
             className="text-sm font-medium text-muted-foreground"
           >
-            People on Framey
+            {t("peopleOnFramey")}
           </h3>
           <AccountList accounts={suggestions} />
         </section>

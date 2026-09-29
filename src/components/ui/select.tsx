@@ -46,11 +46,11 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon
-        render={
-          <ChevronDownIcon aria-hidden className="pointer-events-none size-4 text-muted-foreground" />
-        }
-      />
+      {/* The icon goes inside, not in `render`: reicon's svg sets its own
+          innerHTML, which clashes with the children Icon passes to `render`. */}
+      <SelectPrimitive.Icon className="flex">
+        <ChevronDownIcon aria-hidden className="pointer-events-none size-4 text-muted-foreground" />
+      </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
 }
@@ -126,7 +126,7 @@ function SelectItem({
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
+          <span className="pointer-events-none absolute end-2 flex size-4 items-center justify-center" />
         }
       >
         <CheckIcon aria-hidden className="pointer-events-none" />

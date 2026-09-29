@@ -6,6 +6,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { X } from "reicon-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
+import { useT } from "../i18n-provider";
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -27,6 +28,7 @@ function DialogOverlay({
   className,
   ...props
 }: DialogPrimitive.Backdrop.Props) {
+  const t = useT();
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
@@ -41,13 +43,13 @@ function DialogOverlay({
         render={
           <Button
             variant="ghost"
-            className="absolute top-4 right-4"
+            className="absolute end-4 top-4"
             size="icon-sm"
           />
         }
       >
         <X />
-        <span className="sr-only">Close</span>
+        <span className="sr-only">{t("close")}</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Backdrop>
   );
@@ -99,6 +101,7 @@ function DialogFooter({
 }: React.ComponentProps<"div"> & {
   showCloseButton?: boolean;
 }) {
+  const t = useT();
   return (
     <div
       data-slot="dialog-footer"
@@ -111,7 +114,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close render={<Button variant="outline" />}>
-          Close
+          {t("close")}
         </DialogPrimitive.Close>
       )}
     </div>

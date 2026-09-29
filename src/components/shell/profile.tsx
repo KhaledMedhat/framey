@@ -1,26 +1,34 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { cache } from "react";
-import { eq } from "drizzle-orm";
+import { Lock, UserBlock } from "reicon-react";
 
 import { getFullName } from "@/lib/utils";
-import { db } from "@/server/db";
-import { users } from "@/server/db/schema";
+import { auth } from "@/server/auth";
+import { getT } from "@/server/i18n";
+import {
+  getProfile,
+  getProfilePosts,
+  getReposts,
+  getSaved,
+} from "@/server/profile";
+import {
+  getArchivedStories,
+  getHighlights,
+  getUserStories,
+} from "@/server/stories";
+import ProfileHeader from "./profile-header";
+import ProfileTabs from "./profile-tabs";
+import { Highlights } from "./stories";
 
-// Shared by the page and its metadata: one query per request.
-const getProfile = cache((username: string) =>
-  db.query.users.findFirst({
-    where: eq(users.username, username),
-    columns: { username: true, firstName: true, lastName: true },
-  }),
-);
+// The proxy guarantees a signed-in user on every shell page.
+const viewerId = async () => (await auth())!.user.id;
 
 export async function profileMetadata(username: string): Promise<Metadata> {
-  const user = await getProfile(username.toLowerCase());
+  const user = await getProfile(await viewerId(), username.toLowerCase());
   return {
     title: user
       ? `${getFullName(user.firstName, user.lastName)} (@${user.username})`
-      : "Page not found",
+      : (await getT())("pageNotFound"),
   };
 }
 
@@ -29,12 +37,78 @@ export default async function Profile({ username }: { username: string }) {
   const canonical = username.toLowerCase();
   if (canonical !== username) permanentRedirect(`/${canonical}`);
 
-  const user = await getProfile(canonical);
-  if (!user) notFound();
+  const viewer = await viewerId();
+  const profile = await getProfile(viewer, canonical);
+  if (!profile) notFound();
+
+  const t = await getT();
+  const visible = profile.canView;
+  const [posts, reels, reposts, tagged, saved, highlights, stories, archive] =
+    await Promise.all([
+      visible ? getProfilePosts(viewer, profile.id, "posts") : null,
+      visible ? getProfilePosts(viewer, profile.id, "reels") : null,
+      visible ? getReposts(viewer, profile.id) : null,
+      visible ? getProfilePosts(viewer, profile.id, "tagged") : null,
+      profile.isMe ? getSaved(viewer) : null,
+      visible ? getHighlights(viewer, profile.id) : [],
+      profile.hasStory ? getUserStories(viewer, profile.id) : [],
+      profile.isMe ? getArchivedStories(viewer) : null,
+    ]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-6 py-10">
-      <h1 className="text-2xl font-bold">@{user.username}</h1>
+    <div className="mx-auto w-full max-w-screen-2xl pb-10 md:px-8">
+      <ProfileHeader profile={profile} stories={stories} />
+
+      {visible ? (
+        <>
+          <div className="mt-6">
+            <Highlights
+              user={{
+                id: profile.id,
+                username: profile.username,
+                profilePicture: profile.profilePicture,
+              }}
+              highlights={highlights}
+              archive={archive}
+            />
+          </div>
+          <ProfileTabs
+            isMe={profile.isMe}
+            name={profile.isMe ? "you" : profile.firstName}
+            posts={posts?.posts ?? []}
+            reels={reels?.posts ?? []}
+            reposts={reposts ?? []}
+            tagged={tagged?.posts ?? []}
+            saved={saved}
+          />
+        </>
+      ) : (
+        <section
+          aria-labelledby="private-heading"
+          className="mt-8 flex flex-col items-center gap-3 border-t px-6 py-20 text-center md:mt-10"
+        >
+          <span className="flex size-16 items-center justify-center rounded-full border">
+            {profile.blocked ? (
+              <UserBlock aria-hidden className="size-7" />
+            ) : (
+              <Lock aria-hidden className="size-7" />
+            )}
+          </span>
+          <h2 id="private-heading" className="text-xl font-bold tracking-tight">
+            {profile.blocked ? t("blockedTitle") : t("privateTitle")}
+          </h2>
+          <p className="max-w-xs text-sm text-pretty text-muted-foreground">
+            {t(
+              profile.blocked
+                ? "blockedBody"
+                : profile.requested
+                  ? "privateRequested"
+                  : "privateFollow",
+              { name: profile.firstName },
+            )}
+          </p>
+        </section>
+      )}
     </div>
   );
 }

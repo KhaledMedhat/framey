@@ -128,6 +128,14 @@
     70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { opacity: 0; transform: translate(-50%, -62%) scale(1); }
   }
+
+  /* A story's progress bar; its duration is set inline per story. */
+  --animate-story-progress: story-progress 5s linear forwards;
+
+  @keyframes story-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
 }
 
 @layer base {

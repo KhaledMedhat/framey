@@ -18,6 +18,7 @@ import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { cn } from "cn";
 import { ImageEditor } from "../editors/image-editor";
+import { useT } from "../i18n-provider";
 
 function ProfilePicturePreview({
   file,
@@ -63,6 +64,7 @@ const RegisterForm: React.FC<{
   formId: string;
   isRegistering: boolean;
 }> = ({ form, formId, isRegistering }) => {
+  const t = useT();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [editorStage, setEditorStage] = useState<"crop" | "edit">("crop");
   const [showConfirmPassword, setShowConfirmPassword] =
@@ -132,7 +134,7 @@ const RegisterForm: React.FC<{
           // below disables itself instead.
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="w-full">
-              <FieldLabel htmlFor="profilePicture">Profile Picture</FieldLabel>
+              <FieldLabel htmlFor="profilePicture">{t("profilePicture")}</FieldLabel>
               <div className="relative">
                 <ProfilePicturePreview file={field.value} form={form} />
                 <Input
@@ -174,7 +176,7 @@ const RegisterForm: React.FC<{
                 className="min-w-0 flex-1"
               >
                 <FieldLabel htmlFor="firstName">
-                  First Name <span className="text-destructive">*</span>
+                  {t("firstName")} <span className="text-destructive">*</span>
                 </FieldLabel>
                 <Input
                   {...field}
@@ -202,7 +204,7 @@ const RegisterForm: React.FC<{
                 className="min-w-0 flex-1"
               >
                 <FieldLabel htmlFor="lastName">
-                  Last Name <span className="text-destructive">*</span>
+                  {t("lastName")} <span className="text-destructive">*</span>
                 </FieldLabel>
                 <Input
                   {...field}
@@ -228,13 +230,13 @@ const RegisterForm: React.FC<{
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="username">
-                Username <span className="text-destructive">*</span>
+                {t("username")} <span className="text-destructive">*</span>
               </FieldLabel>
               <Input
                 {...field}
                 id="username"
                 aria-invalid={fieldState.invalid}
-                placeholder="Enter your username"
+                placeholder={t("enterUsername")}
                 autoComplete="off"
               />
               {fieldState.invalid && (
@@ -253,7 +255,7 @@ const RegisterForm: React.FC<{
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="email">
-                Email <span className="text-destructive">*</span>
+                {t("email")} <span className="text-destructive">*</span>
               </FieldLabel>
               <Input
                 {...field}
@@ -279,10 +281,10 @@ const RegisterForm: React.FC<{
             <Field data-invalid={fieldState.invalid}>
               <div className="flex items-center justify-between">
                 <FieldLabel htmlFor="password">
-                  Password <span className="text-destructive">*</span>
+                  {t("password")} <span className="text-destructive">*</span>
                 </FieldLabel>
                 <Button type="button" size="sm" variant="link">
-                  Forgot password?
+                  {t("forgotPassword")}
                 </Button>
               </div>
               <InputGroup>
@@ -300,9 +302,7 @@ const RegisterForm: React.FC<{
                     size="icon"
                     variant="ghost"
                     onClick={() => setShowPassword((visible) => !visible)}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
+                    aria-label={showPassword ? t("hidePassword") : t("showPassword")}
                   >
                     {showPassword ? (
                       <Eye className="text-muted-foreground" />
@@ -329,7 +329,7 @@ const RegisterForm: React.FC<{
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="confirmPassword">
-                Confirm Password <span className="text-destructive">*</span>
+                {t("confirmPassword")} <span className="text-destructive">*</span>
               </FieldLabel>
               <InputGroup>
                 <InputGroupInput
@@ -348,9 +348,7 @@ const RegisterForm: React.FC<{
                     onClick={() =>
                       setShowConfirmPassword((visible) => !visible)
                     }
-                    aria-label={
-                      showConfirmPassword ? "Hide password" : "Show password"
-                    }
+                    aria-label={showConfirmPassword ? t("hidePassword") : t("showPassword")}
                   >
                     {showConfirmPassword ? (
                       <Eye className="text-muted-foreground" />
@@ -386,12 +384,12 @@ const RegisterForm: React.FC<{
           {isRegistering ? (
             <>
               {" "}
-              <Spinner /> Signing up{" "}
+              <Spinner /> {t("signingUp")}{" "}
             </>
           ) : values.profilePicture === undefined ? (
-            "Skip without a profile picture"
+            t("skipProfilePicture")
           ) : (
-            "Sign up"
+            t("signUp")
           )}
         </Button>
       </div>

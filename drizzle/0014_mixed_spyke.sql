@@ -1,0 +1,1 @@
+ALTER TABLE "framey_post_comment" ADD COLUMN "gif" jsonb;

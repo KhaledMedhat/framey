@@ -1,0 +1,2 @@
+ALTER TABLE "framey_message" ADD COLUMN "replyToId" uuid;--> statement-breakpoint
+ALTER TABLE "framey_message" ADD CONSTRAINT "framey_message_replyToId_framey_message_id_fk" FOREIGN KEY ("replyToId") REFERENCES "public"."framey_message"("id") ON DELETE set null ON UPDATE no action;

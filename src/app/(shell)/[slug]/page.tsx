@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Feed from "@/components/shell/feed";
 import Profile, { profileMetadata } from "@/components/shell/profile";
 import { FEED_SLUG } from "@/lib/utils";
+import { getT } from "@/server/i18n";
 
 // Page params arrive URL-encoded ("/@me" gives "%40me"). Malformed escapes
 // never get here: Next answers them with a 400 first.
@@ -13,7 +14,9 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[slug]">): Promise<Metadata> {
   const handle = await getHandle(params);
-  return handle === FEED_SLUG ? { title: "Feed" } : profileMetadata(handle);
+  return handle === FEED_SLUG
+    ? { title: (await getT())("feed") }
+    : profileMetadata(handle);
 }
 
 /** `/@me` is the signed-in user's feed; any other handle is a profile. */

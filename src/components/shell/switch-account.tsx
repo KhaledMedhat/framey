@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useT } from "../i18n-provider";
 import { toast } from "../ui/toast";
 import { Button } from "../ui/button";
 import { type IconComponent } from "reicon-react";
@@ -49,6 +50,7 @@ export function SwitchAccountDialog({
   className?: string;
 }) {
   const router = useRouter();
+  const t = useT();
   const dispatch = useDispatch();
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -72,8 +74,8 @@ export function SwitchAccountDialog({
         type: "error",
         description:
           result.code === "rate_limited"
-            ? "Too many attempts. Please try again later."
-            : "Invalid email or password.",
+            ? t("tooManyAttempts")
+            : t("invalidCredentials"),
       });
       return;
     }
@@ -100,9 +102,9 @@ export function SwitchAccountDialog({
       />
       <DialogContent className="max-w-md! p-10">
         <DialogHeader>
-          <DialogTitle>Switch accounts</DialogTitle>
+          <DialogTitle>{t("switchAccounts")}</DialogTitle>
           <DialogDescription>
-            Log in to another account. You&apos;ll be signed out of this one.
+            {t("switchAccountsBody")}
           </DialogDescription>
         </DialogHeader>
         <form id={FORM_ID} onSubmit={form.handleSubmit(onSubmit)}>

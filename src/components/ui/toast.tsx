@@ -6,6 +6,8 @@ import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
 import { X as XIcon, CheckCircle as CircleCheckIcon, InfoCircle as InfoIcon, AlertTriangle as TriangleAlertIcon, XCircle as OctagonXIcon, Loader as Loader2Icon } from "reicon-react"
+import { translateMessage } from "@/lib/i18n"
+import { useLang, useT } from "../i18n-provider"
 
 const toast = ToastPrimitive.createToastManager()
 
@@ -114,10 +116,11 @@ function ToastClose({
   render = <Button variant="ghost" size="icon-sm" />,
   ...props
 }: ToastPrimitive.Close.Props) {
+  const t = useT()
   return (
     <ToastPrimitive.Close
       data-slot="toast-close"
-      aria-label="Close toast"
+      aria-label={t("closeToast")}
       render={render}
       className={cn(
         "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
@@ -181,6 +184,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
 function ToastList() {
   const { toasts } = ToastPrimitive.useToastManager()
+  const lang = useLang()
 
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>
@@ -188,7 +192,11 @@ function ToastList() {
         <ToastIcon type={toastItem.type} />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <ToastTitle />
-          <ToastDescription />
+          <ToastDescription>
+            {typeof toastItem.description === "string"
+              ? translateMessage(lang, toastItem.description)
+              : toastItem.description}
+          </ToastDescription>
         </div>
         <ToastAction />
         <ToastClose />

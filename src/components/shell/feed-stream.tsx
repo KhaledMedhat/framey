@@ -1,28 +1,46 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import type { FeedPage } from "@/interfaces/post.interface";
+import { X } from "reicon-react";
+
+import type {
+  FeedPage,
+  FeedPost as FeedPostData,
+} from "@/interfaces/post.interface";
+import { isVideoType } from "@/lib/files";
 import { useLazyFeedPageQuery } from "@/store/api";
+import { useT } from "../i18n-provider";
 import { Button } from "../ui/button";
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "../ui/dialog";
 import { Spinner } from "../ui/spinner";
 import FeedPost from "./feed-post";
 import { CAROUSEL_STEP_EVENT } from "./post-media";
 
 const scrollBehavior = (): ScrollBehavior =>
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? "auto"
+    : "smooth";
 
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
-  (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+  (target.isContentEditable ||
+    /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
 
-/** One post per viewport, snapping; J/K step between them, pages load ahead. */
+const isVideoPost = (post: FeedPostData) => isVideoType(post.media[0]?.type);
+
+/** Posts in one scrolling column; J/K step between them, pages load ahead. */
 export default function FeedStream({ initial }: { initial: FeedPage }) {
   const [posts, setPosts] = useState(initial.posts);
   const [cursor, setCursor] = useState(initial.nextCursor);
   const [fetchPage, { isFetching, isError }] = useLazyFeedPageQuery();
   const scroller = useRef<HTMLDivElement>(null);
   const sentinel = useRef<HTMLDivElement>(null);
+  // A photo opens in the post viewer like on a profile; a video opens its reel page.
+  const [open, setOpen] = useState<FeedPostData | null>(null);
+  const router = useRouter();
+  const t = useT();
 
   const loadMore = async () => {
     if (!cursor || isFetching) return;
@@ -52,23 +70,42 @@ export default function FeedStream({ initial }: { initial: FeedPage }) {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return;
+      if (
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        isTyping(event.target)
+      )
+        return;
+      // The post viewer scrolls itself.
+      if (document.querySelector('[data-slot="dialog-content"]')) return;
       const el = scroller.current;
       if (!el) return;
       const key = event.key.toLowerCase();
+      const posts = [...el.querySelectorAll("article")];
+      const top = el.getBoundingClientRect().top;
+      // The post whose top is nearest the scroller's top is the current one.
+      const current = posts.reduce<{ i: number; d: number }>(
+        (best, post, i) => {
+          const d = Math.abs(post.getBoundingClientRect().top - top);
+          return d < best.d ? { i, d } : best;
+        },
+        { i: 0, d: Infinity },
+      ).i;
       if (key === "j" || key === "k") {
         event.preventDefault();
-        el.scrollBy({
-          top: key === "j" ? el.clientHeight : -el.clientHeight,
+        posts[current + (key === "j" ? 1 : -1)]?.scrollIntoView({
+          block: "start",
           behavior: scrollBehavior(),
         });
       } else if (key === "arrowleft" || key === "arrowright") {
-        // Every frame is exactly one scroller-height tall, so this is the snapped post.
-        const current = el.querySelectorAll("article")[Math.round(el.scrollTop / el.clientHeight)];
-        if (!current) return;
+        const post = posts[current];
+        if (!post) return;
         event.preventDefault();
-        current.dispatchEvent(
-          new CustomEvent(CAROUSEL_STEP_EVENT, { detail: key === "arrowright" ? 1 : -1 }),
+        post.dispatchEvent(
+          new CustomEvent(CAROUSEL_STEP_EVENT, {
+            detail: key === "arrowright" ? 1 : -1,
+          }),
         );
       }
     };
@@ -80,43 +117,81 @@ export default function FeedStream({ initial }: { initial: FeedPage }) {
     <div
       ref={scroller}
       tabIndex={0}
-      aria-label="Posts"
-      className="h-[calc(100svh-3.5rem-env(safe-area-inset-bottom))] snap-y snap-mandatory overflow-y-auto overscroll-contain focus-visible:outline-none md:h-svh"
+      aria-label={t("postsLabel")}
+      className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain py-2 focus-visible:outline-none md:gap-6 md:py-6"
     >
       {posts.map((post, i) => (
-        <FeedPost key={post.id} post={post} priority={i === 0} />
+        <FeedPost
+          key={post.id}
+          post={post}
+          priority={i === 0}
+          onOpen={() =>
+            isVideoPost(post) ? router.push(`/reels/${post.id}`) : setOpen(post)
+          }
+        />
       ))}
+
+      <Dialog open={!!open} onOpenChange={(next) => !next && setOpen(null)}>
+        <DialogContent className="inset-0 top-0 left-0 h-svh w-full max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-none bg-background px-0 py-12 sm:max-w-none md:grid md:place-items-center md:px-16">
+          {open && (
+            <>
+              <DialogTitle className="sr-only">
+                {t("postBy", { name: open.author.username })}
+              </DialogTitle>
+              <FeedPost key={open.id} post={open} priority layout="modal" />
+              <DialogClose
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="fixed end-3 top-3 md:end-4 md:top-4"
+                  />
+                }
+              >
+                <X aria-hidden />
+                <span className="sr-only">{t("close")}</span>
+              </DialogClose>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <div
         ref={sentinel}
-        className="flex h-full snap-start flex-col items-center justify-center gap-4 px-6 text-center"
+        className="flex min-h-48 flex-col items-center justify-center gap-4 px-6 py-10 text-center"
       >
         {cursor ? (
           isError ? (
             <>
               <p className="text-sm text-muted-foreground">
-                Couldn&apos;t load more posts.
+                {t("loadMoreFailed")}
               </p>
               <Button variant="outline" onClick={() => void loadMore()}>
-                Try again
+                {t("tryAgain")}
               </Button>
             </>
           ) : (
-            <Spinner className="size-6 text-muted-foreground" aria-label="Loading more posts" />
+            <Spinner
+              className="size-6 text-muted-foreground"
+              aria-label={t("loadingMorePosts")}
+            />
           )
         ) : (
           <>
-            <p className="text-lg font-semibold">You&apos;re all caught up</p>
+            <p className="text-lg font-semibold">{t("allCaughtUp")}</p>
             <p className="max-w-xs text-sm text-muted-foreground">
-              That&apos;s everything from the people you follow.
+              {t("allCaughtUpBody")}
             </p>
             <Button
               variant="ghost"
               onClick={() =>
-                scroller.current?.scrollTo({ top: 0, behavior: scrollBehavior() })
+                scroller.current?.scrollTo({
+                  top: 0,
+                  behavior: scrollBehavior(),
+                })
               }
             >
-              Back to the newest
+              {t("backToNewest")}
             </Button>
           </>
         )}

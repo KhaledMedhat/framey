@@ -11,12 +11,14 @@ import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "cn";
+import { useT } from "../i18n-provider";
 
 const LoginForm: React.FC<{
   form: UseFormReturn<z.infer<typeof loginSchema>>;
   formId: string;
   isLoggingIn: boolean;
 }> = ({ form, formId, isLoggingIn }) => {
+  const t = useT();
   const [showPassword, setShowPassword] = useState(false);
   // useWatch, not form.watch(): the React Compiler memoizes render-time
   // form.watch() calls and never refreshes them.
@@ -43,7 +45,7 @@ const LoginForm: React.FC<{
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
             <Input
               {...field}
               id="email"
@@ -67,9 +69,9 @@ const LoginForm: React.FC<{
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <div className="flex items-center justify-between">
-              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
               <Button type="button" size="sm" variant="link">
-                Forgot password?
+                {t("forgotPassword")}
               </Button>
             </div>
             <div className="relative">
@@ -80,15 +82,15 @@ const LoginForm: React.FC<{
                 aria-invalid={fieldState.invalid}
                 placeholder="****************"
                 autoComplete="off"
-                className="pr-11"
+                className="pe-11"
               />
               <Button
                 type="button"
                 size="icon"
                 variant="ghost"
-                className="absolute inset-y-0 right-1 my-auto hover:bg-transparent! active:translate-y-0"
+                className="absolute inset-y-0 end-1 my-auto hover:bg-transparent! active:translate-y-0"
                 onClick={() => setShowPassword((visible) => !visible)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
               >
                 {showPassword ? (
                   <Eye className="text-muted-foreground" />
@@ -121,7 +123,7 @@ const LoginForm: React.FC<{
               checked={field.value}
               onCheckedChange={field.onChange}
             />
-            <FieldLabel htmlFor="rememberMe">Remember me</FieldLabel>
+            <FieldLabel htmlFor="rememberMe">{t("rememberMe")}</FieldLabel>
           </Field>
         )}
       />
@@ -138,10 +140,10 @@ const LoginForm: React.FC<{
       >
         {isLoggingIn ? (
           <>
-            <Spinner /> Logging in...
+            <Spinner /> {t("loggingIn")}
           </>
         ) : (
-          "Login"
+          t("login")
         )}
       </Button>
     </div>

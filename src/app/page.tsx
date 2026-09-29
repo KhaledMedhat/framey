@@ -2,6 +2,7 @@ import FormsContainer from "@/components/forms/forms-container";
 import OnboardingForm from "@/components/forms/onboarding-form";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@/server/auth";
+import { getT } from "@/server/i18n";
 import Image from "next/image";
 
 export default async function Home({
@@ -10,6 +11,7 @@ export default async function Home({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const session = await auth();
+  const t = await getT();
   const { error } = await searchParams;
   // Signed-in users with a finished profile never get here: the proxy sends
   // them to the feed.
@@ -41,7 +43,7 @@ export default async function Home({
             className="h-auto w-11"
           />
           <h1 className="max-w-[16ch] text-[clamp(2rem,3vw,2.75rem)] font-bold leading-[1.1] tracking-[-0.02em] text-balance">
-            Capture the moments that matter.
+            {t("tagline")}
           </h1>
         </div>
       </div>
@@ -72,7 +74,7 @@ export default async function Home({
               />
             )}
             <p className="text-[0.8125rem] leading-snug text-muted-foreground">
-              Capture the moments that matter.
+              {t("tagline")}
             </p>
           </div>
         </div>

@@ -14,18 +14,20 @@ import RegisterForm from "./register-form";
 import LoginForm from "./login-form";
 import { toast } from "../ui/toast";
 import { useRegisterMutation, type ApiError } from "@/store/api";
+import type { DictKey } from "@/lib/i18n";
+import { useT } from "../i18n-provider";
 
 const LOGIN_FORM_ID = "login-form";
 const SIGNUP_FORM_ID = "signup-form";
 
 /** `?error=` values NextAuth (or our signIn callback) redirects back with. */
-const AUTH_ERRORS: Record<string, string> = {
-  "use-password":
-    "An account with this email already exists. Log in with your email and password.",
+const AUTH_ERRORS: Record<string, DictKey> = {
+  "use-password": "useYourPassword",
 };
 
 const FormsContainer = ({ authError }: { authError?: string }) => {
   const router = useRouter();
+  const t = useT();
   const [isLoginView, setIsLoginView] = useState<boolean>(true);
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const [register, { isLoading: isRegistering }] = useRegisterMutation();
@@ -68,8 +70,8 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
         type: "error",
         description:
           result.code === "rate_limited"
-            ? "Too many attempts. Please try again later."
-            : "Invalid email or password.",
+            ? t("tooManyAttempts")
+            : t("invalidCredentials"),
       });
       return;
     }
@@ -98,7 +100,7 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
       } else {
         toast.add({
           type: "error",
-          description: error.data?.message ?? "Something went wrong.",
+          description: error.data?.message ?? t("somethingWrong"),
         });
       }
       return;
@@ -106,7 +108,7 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
 
     registerForm.reset();
     setIsLoginView(true);
-    toast.add({ type: "success", description: "Account created successfully 🎉." });
+    toast.add({ type: "success", description: t("accountCreated") });
   };
 
   const onGoogleSignIn = async () => {
@@ -125,12 +127,12 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
       <FieldGroup>
         <div className="flex flex-col items-start gap-1 text-start">
           <h2 className="text-2xl font-bold">
-            {isLoginView ? "Login to Framey" : "Sign up to Framey"}
+            {isLoginView ? t("loginToFramey") : t("signUpToFramey")}
           </h2>
         </div>
         {authError && (
           <p role="alert" className="text-sm text-destructive">
-            {AUTH_ERRORS[authError] ?? "Sign-in failed. Please try again."}
+            {t(AUTH_ERRORS[authError] ?? "signInFailed")}
           </p>
         )}
         {isLoginView ? (
@@ -146,7 +148,7 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
             isRegistering={isSubmitting}
           />
         )}
-        <FieldSeparator>Or continue with</FieldSeparator>
+        <FieldSeparator>{t("orContinueWith")}</FieldSeparator>
         <Field>
           <Button
             size="lg"
@@ -182,9 +184,7 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
             Google
           </Button>
           <div className="text-center text-sm text-muted-foreground">
-            {isLoginView
-              ? "Don't have an account?"
-              : "Already have an account?"}{" "}
+            {isLoginView ? t("noAccount") : t("haveAccount")}{" "}
             <Button
               variant="link"
               type="button"
@@ -192,7 +192,7 @@ const FormsContainer = ({ authError }: { authError?: string }) => {
               onClick={() => setIsLoginView(!isLoginView)}
               className="h-auto p-0"
             >
-              {isLoginView ? "Sign up" : "Login"}
+              {isLoginView ? t("signUp") : t("login")}
             </Button>
           </div>
         </Field>

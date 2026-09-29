@@ -4,6 +4,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
 
 const CORE_BASE = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.9/dist/esm";
+const LOAD_TIMEOUT_MS = 60_000;
 
 let ffmpeg: FFmpeg | null = null;
 let loadPromise: Promise<FFmpeg> | null = null;
@@ -15,11 +16,23 @@ export async function getFFmpeg() {
   loadPromise = (async () => {
     const instance = new FFmpeg();
     const origin = window.location.origin;
-    await instance.load({
-      classWorkerURL: `${origin}/ffmpeg/worker.js`,
-      coreURL: `${CORE_BASE}/ffmpeg-core.js`,
-      wasmURL: `${CORE_BASE}/ffmpeg-core.wasm`,
-    });
+    // public/ffmpeg/ holds worker.js, const.js and errors.js copied from
+    // node_modules/@ffmpeg/ffmpeg/dist/esm; re-copy them when upgrading it.
+    // A worker that fails to start never settles load(), so give up instead.
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    await Promise.race([
+      instance.load({
+        classWorkerURL: `${origin}/ffmpeg/worker.js`,
+        coreURL: `${CORE_BASE}/ffmpeg-core.js`,
+        wasmURL: `${CORE_BASE}/ffmpeg-core.wasm`,
+      }),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => {
+          instance.terminate();
+          reject(new Error("The video tools didn't load. Try again."));
+        }, LOAD_TIMEOUT_MS);
+      }),
+    ]).finally(() => clearTimeout(timer));
     ffmpeg = instance;
     return instance;
   })().catch((error) => {
@@ -35,8 +48,6 @@ export type CompressVideoOptions = {
   trimEnd: number;
   muted: boolean;
   ratio?: "original" | "1:1" | "4:5" | "16:9";
-  width?: number;
-  height?: number;
   onProgress?: (progress: number) => void;
 };
 
@@ -49,13 +60,11 @@ function cropFilter(ratio?: CompressVideoOptions["ratio"]) {
   return "crop=if(gt(iw/ih\\,16/9)\\,ih*16/9\\,iw):if(gt(iw/ih\\,16/9)\\,ih\\,iw*9/16)";
 }
 
-function scaleFilter(width?: number, height?: number, maxEdge = 1080) {
-  const w = Math.max(1, width ?? maxEdge);
-  const h = Math.max(1, height ?? maxEdge);
-  if (w <= maxEdge && h <= maxEdge) return null;
-  if (w >= h) return `scale=${maxEdge}:-2`;
-  return `scale=-2:${maxEdge}`;
-}
+// Runs after the crop, so it sees the cropped size: long edge capped at 1080,
+// never upscaled, both sides even (yuv420p requires it). The quotes protect
+// the commas inside min().
+const SCALE_FILTER =
+  "scale='min(1080,iw)':'min(1080,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2";
 
 function inputNameFor(file: File) {
   const match = file.name.match(/\.[^./\\]+$/);
@@ -67,10 +76,7 @@ export async function compressVideo(file: File, options: CompressVideoOptions) {
   const inputName = inputNameFor(file);
   const outputName = "output.mp4";
   const clipDuration = Math.max(0.1, options.trimEnd - options.trimStart);
-  const vf = [
-    cropFilter(options.ratio),
-    scaleFilter(options.width, options.height),
-  ]
+  const vf = [cropFilter(options.ratio), SCALE_FILTER]
     .filter(Boolean)
     .join(",");
 
@@ -95,13 +101,19 @@ export async function compressVideo(file: File, options: CompressVideoOptions) {
       inputName,
       "-t",
       clipDuration.toFixed(3),
-      ...(vf ? ["-vf", vf] : []),
+      "-vf",
+      vf,
+      // Drops container metadata such as a phone's GPS position.
+      "-map_metadata",
+      "-1",
       "-c:v",
       "libx264",
       "-preset",
       "veryfast",
+      // 23 is x264's default: visually clean at 1080p and about half the
+      // size of 20, which matters for a single-threaded wasm encode + upload.
       "-crf",
-      "20",
+      "23",
       "-pix_fmt",
       "yuv420p",
       "-movflags",

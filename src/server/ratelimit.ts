@@ -22,6 +22,11 @@ const limiters = {
   login: limiter("login", 10, "15 m"),
   register: limiter("register", 5, "1 h"),
   completeProfile: limiter("complete-profile", 10, "1 m"),
+  // Keyed by user id: each post can upload up to 20 files.
+  createPost: limiter("create-post", 20, "1 h"),
+  createStory: limiter("create-story", 30, "1 h"),
+  comment: limiter("comment", 30, "1 m"),
+  message: limiter("message", 60, "1 m"),
 };
 
 /** Seconds until `key` may retry, or 0 when the request is allowed. */

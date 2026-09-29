@@ -49,6 +49,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Slider } from "../ui/slider";
+import type { DictKey } from "@/lib/i18n";
+import { useT } from "../i18n-provider";
 
 type Ratio = "original" | "1:1" | "4:5" | "16:9";
 type EditorStage = "crop" | "edit";
@@ -246,16 +248,16 @@ const FILTER_PRESETS: Record<FilterName, FilterPreset> = {
 
 const ADJUSTMENT_FIELDS: {
   key: keyof Adjustments;
-  label: string;
+  label: DictKey;
   min: number;
   max: number;
 }[] = [
-  { key: "brightness", label: "Brightness", min: -100, max: 100 },
-  { key: "contrast", label: "Contrast", min: -100, max: 100 },
-  { key: "fade", label: "Fade", min: 0, max: 100 },
-  { key: "saturation", label: "Saturation", min: -100, max: 100 },
-  { key: "temperature", label: "Temperature", min: -100, max: 100 },
-  { key: "vignette", label: "Vignette", min: 0, max: 100 },
+  { key: "brightness", label: "brightness", min: -100, max: 100 },
+  { key: "contrast", label: "contrast", min: -100, max: 100 },
+  { key: "fade", label: "fade", min: 0, max: 100 },
+  { key: "saturation", label: "saturation", min: -100, max: 100 },
+  { key: "temperature", label: "temperature", min: -100, max: 100 },
+  { key: "vignette", label: "vignette", min: 0, max: 100 },
 ];
 
 function clamp(value: number, min: number, max: number) {
@@ -555,6 +557,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
     { file, files, onCancel, onDone, onStageChange, showPrimaryButtons },
     ref,
   ) {
+    const t = useT();
     const incomingFiles = useMemo(() => {
       const list = files?.length ? files : file ? [file] : [];
       return list.filter(
@@ -1042,7 +1045,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
     return (
       <section
         className="relative w-full min-w-0 max-w-full overflow-hidden bg-background"
-        aria-label="Image editor"
+        aria-label={t("imageEditor")}
       >
         {showPrimaryButtons && (
           <div className="flex items-center justify-between border-b px-3 py-2">
@@ -1053,7 +1056,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                 if (!goBack()) onCancel?.();
               }}
             >
-              <ArrowLeft />
+              <ArrowLeft aria-label={t("back")} className="rtl:rotate-180" />
             </Button>
             <Button
               type="button"
@@ -1062,7 +1065,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
               onClick={() => void exportImage()}
               disabled={!activeSession?.loaded}
             >
-              {stage === "crop" ? "Next" : "Done"}
+              {stage === "crop" ? t("next") : t("done")}
             </Button>
           </div>
         )}
@@ -1255,8 +1258,16 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                 </CarouselContent>
                 {sessions.length > 1 && (
                   <>
-                    <CarouselPrevious className="z-20" />
-                    <CarouselNext className="z-20" />
+                    <CarouselPrevious
+                      variant="secondary"
+                      size="icon"
+                      className={cn(overlayClassName, "left-3 z-20 disabled:opacity-0")}
+                    />
+                    <CarouselNext
+                      variant="secondary"
+                      size="icon"
+                      className={cn(overlayClassName, "right-3 z-20 disabled:opacity-0")}
+                    />
                   </>
                 )}
               </Carousel>
@@ -1300,14 +1311,14 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                             <DropdownMenuGroup>
                               {ratios.map((item) => (
                                 <DropdownMenuRadioItem key={item} value={item}>
-                                  {item === "original" ? "Original" : item}
+                                  {item === "original" ? t("original") : item}
                                 </DropdownMenuRadioItem>
                               ))}
                             </DropdownMenuGroup>
                           </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                      <TooltipContent>Select crop</TooltipContent>
+                      <TooltipContent>{t("selectCrop")}</TooltipContent>
                     </Tooltip>
 
                     {isImageSession(activeSession) && (
@@ -1352,7 +1363,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                             </div>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                        <TooltipContent>Select zoom</TooltipContent>
+                        <TooltipContent>{t("selectZoom")}</TooltipContent>
                       </Tooltip>
                     )}
                   </div>
@@ -1372,7 +1383,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                                 >
                                   <Library size={18} />
                                   <span className="sr-only">
-                                    Selected images
+                                    {t("selectedImages")}
                                   </span>
                                 </Button>
                               }
@@ -1426,7 +1437,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                                 >
                                   <Plus />
                                   <span className="sr-only">
-                                    Add photo or video
+                                    {t("addPhotoOrVideo")}
                                   </span>
                                 </Button>
                               )}
@@ -1434,7 +1445,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                      <TooltipContent>Open media gallery</TooltipContent>
+                      <TooltipContent>{t("openMediaGallery")}</TooltipContent>
                     </Tooltip>
                   )}
                 </div>
@@ -1484,8 +1495,8 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                     variant="line"
                     className="w-full justify-start rounded-none px-3"
                   >
-                    <TabsTrigger value="filters">Filters</TabsTrigger>
-                    <TabsTrigger value="adjustments">Adjustments</TabsTrigger>
+                    <TabsTrigger value="filters">{t("filters")}</TabsTrigger>
+                    <TabsTrigger value="adjustments">{t("adjustments")}</TabsTrigger>
                   </TabsList>
                   <TabsContent
                     value="filters"
@@ -1540,7 +1551,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(
                       {ADJUSTMENT_FIELDS.map((field) => (
                         <Field key={field.key}>
                           <div className="flex items-center justify-between">
-                            <FieldLabel>{field.label}</FieldLabel>
+                            <FieldLabel>{t(field.label)}</FieldLabel>
                             <span className="text-xs text-muted-foreground">
                               {adjustments[field.key]}
                             </span>

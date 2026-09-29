@@ -14,9 +14,11 @@ import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
 import { Button } from "../ui/button";
 import { toast } from "../ui/toast";
+import { useT } from "../i18n-provider";
 
 export default function OnboardingForm() {
   const router = useRouter();
+  const t = useT();
   const { update } = useSession();
   const [completeProfile, { isLoading }] = useCompleteProfileMutation();
   const form = useForm<z.infer<typeof completeProfileSchema>>({
@@ -41,7 +43,7 @@ export default function OnboardingForm() {
       } else {
         toast.add({
           type: "error",
-          description: error.data?.message ?? "Something went wrong.",
+          description: error.data?.message ?? t("somethingWrong"),
         });
       }
       return;
@@ -57,10 +59,9 @@ export default function OnboardingForm() {
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         <div className="flex flex-col items-start gap-1 text-start">
-          <h2 className="text-2xl font-bold">Complete your profile</h2>
+          <h2 className="text-2xl font-bold">{t("completeProfile")}</h2>
           <p className="text-sm text-muted-foreground">
-            Google accounts do not need a password here. Add the remaining
-            profile details to finish setup.
+            {t("completeProfileBody")}
           </p>
         </div>
         <Controller
@@ -70,12 +71,12 @@ export default function OnboardingForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="min-w-0 flex-1">
               <FieldLabel htmlFor="username">
-                Username <span className="text-destructive">*</span>
+                {t("username")} <span className="text-destructive">*</span>
               </FieldLabel>
               <Input
                 id="username"
                 name={field.name}
-                placeholder="Enter your username"
+                placeholder={t("enterUsername")}
                 value={field.value}
                 onChange={field.onChange}
               />
@@ -96,10 +97,10 @@ export default function OnboardingForm() {
         >
           {isLoading ? (
             <>
-              <Spinner /> Saving...
+              <Spinner /> {t("saving")}
             </>
           ) : (
-            "Continue"
+            t("continue")
           )}
         </Button>
       </FieldGroup>

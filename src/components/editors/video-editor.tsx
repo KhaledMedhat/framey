@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Field, FieldLabel, FieldContent } from "../ui/field";
 import { Switch } from "../ui/switch";
+import { useT } from "../i18n-provider";
 
 const FILMSTRIP_FRAMES = 12;
 const MIN_CLIP = 0.5;
@@ -273,8 +274,6 @@ export async function finalizeVideoMedia(
       trimEnd: item.trimEnd ?? video.duration,
       muted: item.muted ?? false,
       ratio: item.ratio,
-      width: item.width ?? video.videoWidth,
-      height: item.height ?? video.videoHeight,
       onProgress,
     });
 
@@ -524,12 +523,13 @@ export function VideoEditSidebar({
   session: VideoSession;
   onChange: (patch: Partial<VideoSession>) => void;
 }) {
+  const t = useT();
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4">
       <Field>
-        <FieldLabel>Cover</FieldLabel>
+        <FieldLabel>{t("cover")}</FieldLabel>
         <p className="text-xs text-muted-foreground">
-          Drag the box to pick a cover frame.
+          {t("coverHint")}
         </p>
         <CoverStrip
           session={session}
@@ -538,7 +538,7 @@ export function VideoEditSidebar({
       </Field>
 
       <Field>
-        <FieldLabel>Trim</FieldLabel>
+        <FieldLabel>{t("trim")}</FieldLabel>
         <p className="text-xs text-muted-foreground">
           {formatTime(session.trimEnd - session.trimStart)}
         </p>
@@ -556,7 +556,7 @@ export function VideoEditSidebar({
 
       <Field orientation="horizontal">
         <FieldContent>
-          <FieldLabel htmlFor="video-sound">Sound</FieldLabel>
+          <FieldLabel htmlFor="video-sound">{t("sound")}</FieldLabel>
         </FieldContent>
         <Switch
           id="video-sound"
@@ -575,6 +575,7 @@ function CoverStrip({
   session: VideoSession;
   onCoverChange: (time: number) => void;
 }) {
+  const t = useT();
   const trackRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
   const [dragging, setDragging] = useState(false);
@@ -655,7 +656,7 @@ function CoverStrip({
           </div>
           <div
             role="slider"
-            aria-label="Cover frame"
+            aria-label={t("coverFrame")}
             aria-valuemin={session.trimStart}
             aria-valuemax={session.trimEnd}
             aria-valuenow={session.coverTime}
@@ -703,6 +704,7 @@ function TrimStrip({
   session: VideoSession;
   onTrimChange: (start: number, end: number) => void;
 }) {
+  const t = useT();
   const trackRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<"start" | "end" | null>(null);
   const startRatio =
@@ -779,19 +781,19 @@ function TrimStrip({
           width: `${Math.max(0, endRatio - startRatio) * 100}%`,
         }}
       >
-        <button
-          type="button"
-          aria-label="Trim start"
-          className="absolute inset-y-0 left-0 w-3 cursor-ew-resize bg-fborder-foreground"
+        <Button
+          variant="ghost"
+          aria-label={t("trimStart")}
+          className="absolute inset-y-0 left-0 h-auto w-3 cursor-ew-resize rounded-none p-0 hover:bg-foreground/20"
           onPointerDown={(event) => {
             event.preventDefault();
             dragRef.current = "start";
           }}
         />
-        <button
-          type="button"
-          aria-label="Trim end"
-          className="absolute inset-y-0 right-0 w-3 cursor-ew-resize bg-fborder-foreground"
+        <Button
+          variant="ghost"
+          aria-label={t("trimEnd")}
+          className="absolute inset-y-0 right-0 h-auto w-3 cursor-ew-resize rounded-none p-0 hover:bg-foreground/20"
           onPointerDown={(event) => {
             event.preventDefault();
             dragRef.current = "end";

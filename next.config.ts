@@ -4,8 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   images: {
-    // 75 for feed media (next/image's default), 100 for the auth banner.
-    qualities: [75, 100],
+    // 75 is next/image's default, 90 for post media (already a WebP 90 from
+    // the upload route, so a lower second encode would visibly soften it),
+    // 100 for the auth banner.
+    qualities: [75, 90, 100],
 
     remotePatterns: [
       {

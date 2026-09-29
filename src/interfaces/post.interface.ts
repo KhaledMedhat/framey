@@ -96,17 +96,56 @@ export type FeedPost = {
   id: string;
   caption: string | null;
   location: string | null;
+  /** Photon place id; set when the location links to /locations/<id>. */
+  locationId: string | null;
   /** ISO string: crosses the server/client boundary as plain JSON. */
   createdAt: string;
   hideComments: boolean;
   hidePostInfo: boolean;
   author: PostAuthorPreview;
   media: FeedMedia[];
+  /** People tagged on photos; `mediaIndex` says which slide. */
+  tags: PhotoTag[];
+  /** Only ever true on the viewer's own posts. */
+  archived: boolean;
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+  savedByMe: boolean;
+  followingAuthor: boolean;
+  repostCount: number;
+  repostedByMe: boolean;
+  /** Feed only: who you follow put it there by reposting it. */
+  repostedBy?: Pick<PostAuthorPreview, "username" | "profilePicture"> | null;
 };
 
 export type FeedCursor = { createdAt: string; id: string };
 
 export type FeedPage = { posts: FeedPost[]; nextCursor: FeedCursor | null };
+
+/** A GIPHY GIF as comments and messages keep it: its animated webp and size. */
+export type Gif = { url: string; width: number; height: number };
+
+export type PostComment = {
+  id: string;
+  content: string;
+  createdAt: string;
+  author: {
+    id: string;
+    username: string;
+    profilePicture: PostAuthorPreview["profilePicture"];
+  };
+  likeCount: number;
+  likedByMe: boolean;
+  /** A GIF sent with (or instead of) the text. */
+  gif: Gif | null;
+  /** Only on top-level comments: replies are one level deep. */
+  replies?: PostComment[];
+  /** Client only: shown before the server confirmed it. */
+  pending?: boolean;
+};
+
+export type PostComments = {
+  postAuthorId: string;
+  comments: PostComment[];
+};

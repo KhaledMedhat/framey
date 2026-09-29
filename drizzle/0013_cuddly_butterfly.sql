@@ -1,0 +1,1 @@
+ALTER TABLE "framey_user" DROP COLUMN "website";
