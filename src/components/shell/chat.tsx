@@ -216,7 +216,7 @@ export function ChatList({
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t("search")}
           aria-label={t("search")}
-          className="h-10 rounded-lg ps-10"
+          className="rounded-lg ps-10"
         />
       </div>
       <div role="tablist" className="mt-3 flex border-b px-4">
@@ -730,10 +730,13 @@ export function ChatThread({
                     ))}
                   <div
                     className={cn(
-                      "relative flex max-w-[75%] flex-col",
+                      "relative flex max-w-[75%] flex-col outline-none",
                       mine ? "items-end" : "items-start",
                       message.likes.length > 0 && "mb-4",
                     )}
+                    // Touch has no hover: tapping the bubble focuses it, which
+                    // reveals its like/reply/remove actions.
+                    tabIndex={-1}
                     onDoubleClick={() => void toggleLike(message)}
                   >
                     {message.replyTo && (
@@ -916,7 +919,7 @@ export function ChatThread({
                       </span>
                     )}
                   </div>
-                  <div className="flex shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none">
+                  <div className="flex shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:pointer-events-none pointer-coarse:group-focus-within:pointer-events-auto motion-reduce:transition-none">
                     <Button
                       variant="ghost"
                       size="icon-sm"

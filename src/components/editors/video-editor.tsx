@@ -170,26 +170,6 @@ export function getVideoCropAspect(
   return 16 / 9;
 }
 
-export function getVideoCropFrameStyle(
-  ratio: VideoRatio | undefined,
-  width: number,
-  height: number,
-) {
-  const aspect = getVideoCropAspect(
-    ratio ?? "1:1",
-    Math.max(1, width),
-    Math.max(1, height),
-  );
-  const landscape = aspect >= 1;
-  return {
-    aspectRatio: `${aspect}`,
-    width: landscape ? "100%" : "auto",
-    height: landscape ? "auto" : "100%",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  };
-}
-
 export async function videoSessionToDraft(
   session: VideoSession,
 ): Promise<EditedPostMedia> {

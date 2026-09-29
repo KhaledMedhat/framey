@@ -94,12 +94,9 @@ export const getProfile = cache(async (viewerId: string, username: string) => {
   if (!user) return null;
 
   const isMe = user.id === viewerId;
-  const block = isMe
-    ? { blocked: false, blockedBy: false }
-    : await blockBetween(viewerId, user.id);
-  // Whoever blocked the viewer is gone for them, like a deleted account.
-  if (block.blockedBy) return null;
+  // The block check runs alongside the counts: one round trip, not two.
   const [
+    block,
     [postCount],
     [followerCount],
     [followingCount],
@@ -108,6 +105,7 @@ export const getProfile = cache(async (viewerId: string, username: string) => {
     [request],
     [story],
   ] = await Promise.all([
+      isMe ? { blocked: false, blockedBy: false } : blockBetween(viewerId, user.id),
       db
         .select({ n: count() })
         .from(posts)
@@ -144,6 +142,8 @@ export const getProfile = cache(async (viewerId: string, username: string) => {
         )
         .limit(1),
     ]);
+  // Whoever blocked the viewer is gone for them, like a deleted account.
+  if (block.blockedBy) return null;
 
   const canView =
     !block.blocked &&

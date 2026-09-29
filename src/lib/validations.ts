@@ -80,23 +80,6 @@ export const postImageAccessibilityItemSchema = z.object({
     .optional(),
 });
 
-export const DEFAULT_POST_IMAGE_ALT = (index: number) =>
-  `Post image ${index + 1}`;
-
-export function resolvePostImageAlt(
-  alt: string | undefined,
-  index: number,
-  fileName?: string,
-) {
-  const trimmed = alt?.trim();
-  if (trimmed) return trimmed;
-
-  const baseName = fileName?.replace(/\.[^.]+$/, "").trim();
-  if (baseName) return baseName;
-
-  return DEFAULT_POST_IMAGE_ALT(index);
-}
-
 export const photoTagSchema = z.object({
   userId: z.string().min(1),
   username: z.string().min(1),
@@ -104,8 +87,6 @@ export const photoTagSchema = z.object({
   y: z.number().min(0).max(1),
   mediaIndex: z.number().int().min(0),
 });
-
-export const mediaTagSchema = photoTagSchema.omit({ mediaIndex: true });
 
 export const postSchema = z.object({
   caption: z
@@ -118,42 +99,6 @@ export const postSchema = z.object({
   postImageAccessibility: z.array(postImageAccessibilityItemSchema).optional(),
   hideComments: z.boolean(),
   hidePostInfo: z.boolean(),
-});
-
-export const mediaCoverSchema = z.object({
-  url: z.string().min(1),
-  type: z.string().optional(),
-  size: z.number().int().optional(),
-  key: z.string().optional(),
-  width: z.number().int().optional(),
-  height: z.number().int().optional(),
-});
-
-export const postMediaInputSchema = z.object({
-  url: z.string().min(1),
-  type: z.string().optional(),
-  size: z.number().int().optional(),
-  key: z.string().optional(),
-  width: z.number().int().optional(),
-  height: z.number().int().optional(),
-  alt: z.string().max(1000).optional(),
-  tags: z.array(mediaTagSchema).optional(),
-  cover: mediaCoverSchema.nullable().optional(),
-  muted: z.boolean().optional(),
-  duration: z.number().min(0).optional(),
-  trimStart: z.number().min(0).optional(),
-  trimEnd: z.number().min(0).optional(),
-  order: z.number().int().min(0),
-});
-
-export const createPostInputSchema = z.object({
-  caption: z.string().max(2200).optional(),
-  location: z.string().max(512).optional(),
-  collaborators: z.array(z.string().min(1)).optional(),
-  tags: z.array(photoTagSchema).optional(),
-  hideComments: z.boolean(),
-  hidePostInfo: z.boolean(),
-  media: z.array(postMediaInputSchema).min(1).max(10),
 });
 
 /** The share step's multipart `post` field; files travel beside it in order. */
@@ -189,16 +134,6 @@ export type SharePostInput = z.infer<typeof sharePostInputSchema>;
 export const postCursorSchema = z.object({
   createdAt: z.coerce.date(),
   id: z.string().uuid(),
-});
-
-export const postListInputSchema = z.object({
-  limit: z.number().int().min(1).max(30).default(12),
-  cursor: postCursorSchema.optional(),
-  direction: z.enum(["forward", "backward"]).optional(),
-});
-
-export const postUserListInputSchema = postListInputSchema.extend({
-  username: z.string().trim().min(1).optional(),
 });
 
 export const postIdInputSchema = z.string().uuid();
@@ -326,6 +261,3 @@ export type RegisterInput = z.infer<typeof registerInputSchema>;
 export type CompleteProfileInput = z.infer<typeof completeProfileSchema>;
 export type EditProfileInput = z.infer<typeof editProfileSchema>;
 export type PostInput = z.infer<typeof postSchema>;
-export type CreatePostInput = z.infer<typeof createPostInputSchema>;
-export type PostListInput = z.infer<typeof postListInputSchema>;
-export type PostUserListInput = z.infer<typeof postUserListInputSchema>;

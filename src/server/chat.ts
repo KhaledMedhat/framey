@@ -99,8 +99,12 @@ async function membership(viewerId: string, conversationId: string) {
   return row ?? null;
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function mustBeMember(viewerId: string, conversationId: string) {
-  const member = await membership(viewerId, conversationId);
+  const member = UUID.test(conversationId)
+    ? await membership(viewerId, conversationId)
+    : null;
   if (!member) throw new ChatError("Chat not found.", 404);
   return member;
 }
@@ -635,6 +639,7 @@ export async function removeChat(viewerId: string, conversationId: string) {
 
 /** Unsend: only your own messages. Returns the media key to delete, if any. */
 export async function unsendMessage(viewerId: string, messageId: string) {
+  if (!UUID.test(messageId)) throw new ChatError("Message not found.", 404);
   const [gone] = await db
     .delete(messages)
     .where(and(eq(messages.id, messageId), eq(messages.senderId, viewerId)))
@@ -645,6 +650,7 @@ export async function unsendMessage(viewerId: string, messageId: string) {
 }
 
 export async function setMessageLike(viewerId: string, messageId: string, liked: boolean) {
+  if (!UUID.test(messageId)) throw new ChatError("Message not found.", 404);
   const [message] = await db
     .select({ conversationId: messages.conversationId })
     .from(messages)

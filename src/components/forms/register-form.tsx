@@ -96,7 +96,7 @@ const RegisterForm: React.FC<{
     >
       <DialogContent
         className={cn(
-          "max-h-screen w-full min-w-0 overflow-hidden",
+          "max-h-svh w-full min-w-0 overflow-hidden",
           "gap-2 px-0 duration-300 ease-out motion-reduce:transition-none",
           "transition-[max-width] max-[50rem]:-translate-x-1/2 min-[44rem]:-translate-x-84",
           editorStage === "edit"

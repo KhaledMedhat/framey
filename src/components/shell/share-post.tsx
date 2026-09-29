@@ -657,12 +657,12 @@ export default function SharePost({
                   {previews.map((preview, i) => (
                     <li key={preview.src} className="flex items-center gap-3">
                       {thumb(preview, "size-9")}
-                      <input
+                      <Input
                         {...form.register(`postImageAccessibility.${i}.alt`)}
                         aria-label={t(preview.video ? "altTextForVideo" : "altTextForPhoto", { n: String(i + 1) })}
                         maxLength={1000}
                         placeholder={t("writeAltText")}
-                        className="h-9 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2.5 text-base shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
+                        className="h-9 flex-1"
                       />
                     </li>
                   ))}

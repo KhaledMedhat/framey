@@ -239,19 +239,20 @@ export default function VoiceMessage({ url, mine }: { url: string; mine: boolean
           )}
         </PopoverTrigger>
         <PopoverContent side="top" className="flex w-52 flex-row items-center gap-3 p-3">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon-sm"
             aria-label={muted ? t("unmute") : t("mute")}
             aria-pressed={muted}
             onClick={() => setMuted((m) => !m)}
-            className="shrink-0 rounded-full p-1 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="rounded-full"
           >
             {muted || volume === 0 ? (
               <VolumeCross aria-hidden className="size-5" />
             ) : (
               <VolumeHigh aria-hidden className="size-5" />
             )}
-          </button>
+          </Button>
           <Slider
             aria-label={t("volume")}
             min={0}

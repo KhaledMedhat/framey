@@ -27,6 +27,10 @@ const limiters = {
   createStory: limiter("create-story", 30, "1 h"),
   comment: limiter("comment", 30, "1 m"),
   message: limiter("message", 60, "1 m"),
+  // Each of these triggers a Pusher message, an upload or a notification.
+  typing: limiter("typing", 30, "1 m"),
+  profilePhoto: limiter("profile-photo", 10, "1 h"),
+  follow: limiter("follow", 60, "1 m"),
 };
 
 /** Seconds until `key` may retry, or 0 when the request is allowed. */

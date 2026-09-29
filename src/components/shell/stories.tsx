@@ -47,6 +47,7 @@ import {
 import { useLang, useT } from "../i18n-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -61,7 +62,10 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Slider } from "../ui/slider";
 import { Spinner } from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
 
 /** Dispatched on window; the nav opens Create in story mode. */
@@ -605,7 +609,7 @@ export function StoryViewer({
                   setPaused(true);
                   setViewersOpen(true);
                 }}
-                className="h-9 gap-2 px-2 text-white hover:bg-white/10 hover:text-white"
+                className="gap-2 px-2 text-white hover:bg-white/10 hover:text-white"
               >
                 <Eye aria-hidden className="size-5" />
                 {t("seenByCount", { count: String(story.viewCount) })}
@@ -656,7 +660,7 @@ export function StoryViewer({
                     aria-label={t("repostToStory")}
                     disabled={reposting}
                     onClick={() => void repostStory()}
-                    className="shrink-0 text-white hover:bg-white/10 hover:text-white active:scale-90"
+                    className="text-white hover:bg-white/10 hover:text-white active:scale-90"
                   >
                     <Repeat3 aria-hidden className="size-6" />
                   </Button>
@@ -667,7 +671,7 @@ export function StoryViewer({
                   aria-pressed={liked[story.id] ?? story.likedByMe}
                   aria-label={(liked[story.id] ?? story.likedByMe) ? t("unlike") : t("like")}
                   onClick={() => void toggleLove()}
-                  className="shrink-0 text-white hover:bg-white/10 hover:text-white active:scale-90"
+                  className="text-white hover:bg-white/10 hover:text-white active:scale-90"
                 >
                   <Heart
                     aria-hidden
@@ -833,13 +837,13 @@ export function StoryTextStep({
         </Button>
         {current && (
           <>
-            <textarea
+            <Textarea
               value={current.text}
               maxLength={200}
               rows={2}
               onChange={(event) => update(current.id, { text: event.target.value })}
               aria-label={t("storyText")}
-              className="w-full resize-none rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="resize-none"
             />
             <div role="radiogroup" aria-label={t("textColor")} className="flex flex-wrap gap-2">
               {TEXT_COLORS.map((color) => (
@@ -858,27 +862,26 @@ export function StoryTextStep({
                 />
               ))}
             </div>
-            <label className="flex items-center justify-between gap-3 text-sm">
+            <Label className="justify-between gap-3 font-normal">
               {t("textBackground")}
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={current.background}
-                onChange={(event) => update(current.id, { background: event.target.checked })}
-                className="size-4 accent-foreground"
+                onCheckedChange={(background) => update(current.id, { background })}
               />
-            </label>
-            <label className="flex flex-col gap-1 text-sm">
+            </Label>
+            <div className="flex flex-col gap-2 text-sm">
               {t("textSize")}
-              <input
-                type="range"
+              <Slider
+                aria-label={t("textSize")}
                 min={0.03}
                 max={0.2}
                 step={0.005}
-                value={current.size}
-                onChange={(event) => update(current.id, { size: Number(event.target.value) })}
-                className="accent-foreground"
+                value={[current.size]}
+                onValueChange={(value) =>
+                  update(current.id, { size: Array.isArray(value) ? value[0]! : value })
+                }
               />
-            </label>
+            </div>
             <Button
               variant="ghost"
               onClick={() => {
@@ -987,7 +990,7 @@ export function StoryTray({
             <Button
               variant="ghost"
               onClick={openCreateStory}
-              className="h-auto w-18 flex-col gap-1.5 p-0 font-normal hover:bg-transparent"
+              className="h-auto w-18 flex-col p-0 font-normal hover:bg-transparent"
             >
               <span className="relative rounded-full p-0.75">
                 <Avatar className="size-14">
@@ -1014,7 +1017,7 @@ export function StoryTray({
                 variant="ghost"
                 onClick={() => setOpenAt(i)}
                 aria-label={`${mine ? t("yourStory") : t("storyBy", { name: reel.user.username })}${reel.seen ? "" : `, ${t("newLabel")}`}`}
-                className="h-auto w-18 flex-col gap-1.5 p-0 font-normal hover:bg-transparent"
+                className="h-auto w-18 flex-col p-0 font-normal hover:bg-transparent"
               >
                 <span
                   className={storyRing(

@@ -1,6 +1,7 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, eq } from "drizzle-orm";
 import NextAuth, { CredentialsSignin, type DefaultSession } from "next-auth";
+import { cache } from "react";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
@@ -38,6 +39,22 @@ declare module "next-auth" {
 // expose to the app. `expiresAt` is epoch ms and slides forward on every
 // session read, like NextAuth's own maxAge.
 type SessionToken = { rememberMe?: boolean; expiresAt?: number };
+
+/**
+ * The layout, the page and its components each call auth(); within one
+ * render they share this read instead of querying the user row each time.
+ * Retries twice: under load Neon briefly refuses new connections.
+ */
+const findUser = cache(async (id: string) => {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await db.query.users.findFirst({ where: eq(users.id, id) });
+    } catch (error) {
+      if (attempt === 2) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 100 * 2 ** attempt));
+    }
+  }
+});
 
 /** Reaches the client as `signIn(...).code`. */
 class TooManyAttempts extends CredentialsSignin {
@@ -173,8 +190,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     session: async ({ session, token }) => {
+      // A failed read counts as signed out for this request only. Throwing
+      // would make Auth.js delete the session cookie: a DB blip logging
+      // everyone out.
       const row = token.sub
-        ? await db.query.users.findFirst({ where: eq(users.id, token.sub) })
+        ? await findUser(token.sub).catch(() => undefined)
         : undefined;
       // Deleted user: return the session without app fields; `auth()` callers
       // should treat a missing `user.id` as signed out.

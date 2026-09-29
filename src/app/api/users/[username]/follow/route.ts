@@ -6,6 +6,7 @@ import { db } from "@/server/db";
 import { followRequests, userFollows } from "@/server/db/schema";
 import { notify, unnotify } from "@/server/notifications";
 import { getFollowList, getProfile } from "@/server/profile";
+import { rateLimit, tooManyRequests } from "@/server/ratelimit";
 
 type Ctx = RouteContext<"/api/users/[username]/follow">;
 
@@ -42,6 +43,9 @@ async function toggle(follow: boolean, ctx: Ctx) {
   const loaded = await load(ctx);
   if (loaded instanceof Response) return loaded;
   const { viewerId, profile } = loaded;
+  // Follow/unfollow loops would spam the other person with notifications.
+  const retryAfter = await rateLimit("follow", viewerId);
+  if (retryAfter) return tooManyRequests(retryAfter);
   if (profile.isMe) {
     return Response.json({ message: "You can't follow yourself." }, { status: 400 });
   }

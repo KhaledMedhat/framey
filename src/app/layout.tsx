@@ -58,10 +58,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </I18nProvider>
           </ThemeProvider>
         </StoreProviders>
-      {/* impeccable-live-start */}
-<script src="http://localhost:8400/live.js?token=657819c8-1b5c-4668-be7a-bfe16df2c811"></script>
-{/* impeccable-live-end */}
-</body>
+      </body>
     </html>
   );
 }

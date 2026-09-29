@@ -20,10 +20,23 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ["postgres", "drizzle-orm", "bcryptjs"],
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "80mb",
-    },
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          // No framing: stops clickjacking the like/follow/delete buttons.
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), geolocation=(), microphone=(self)",
+          },
+        ],
+      },
+    ];
   },
 };
 

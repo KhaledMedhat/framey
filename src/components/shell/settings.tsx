@@ -269,7 +269,7 @@ export function EditProfileForm({
       <Dialog open={photo !== null} onOpenChange={(open) => !open && closeEditor()}>
         <DialogContent
           className={cn(
-            "max-h-screen w-full min-w-0 gap-2 overflow-hidden px-0 transition-[max-width] duration-300 ease-out motion-reduce:transition-none",
+            "max-h-svh w-full min-w-0 gap-2 overflow-hidden px-0 transition-[max-width] duration-300 ease-out motion-reduce:transition-none",
             editorStage === "edit"
               ? "max-w-[min(60rem,calc(100%-2rem))]!"
               : "max-w-2xl!",

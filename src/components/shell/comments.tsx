@@ -174,7 +174,7 @@ export function CommentList({
                       aria-pressed={comment.likedByMe}
                       aria-label={`${comment.likedByMe ? t("unlike") : t("like")}, ${t(comment.likeCount === 1 ? "oneLike" : "nLikes", { n: comment.likeCount.toLocaleString(lang) })}`}
                       onClick={() => void like(comment)}
-                      className="h-auto gap-1 p-0 text-xs font-normal text-muted-foreground tabular-nums hover:bg-transparent! active:scale-90"
+                      className="h-auto p-0 font-normal text-muted-foreground tabular-nums hover:bg-transparent! active:scale-90"
                     >
                       <Heart
                         aria-hidden
@@ -193,7 +193,7 @@ export function CommentList({
                         setExpanded((e) => new Set(e).add(thread.id));
                         onReply({ thread, username: comment.author.username });
                       }}
-                      className="h-auto p-0 text-xs text-muted-foreground"
+                      className="h-auto p-0 text-muted-foreground"
                     >
                       {t("reply")}
                     </Button>
@@ -203,7 +203,7 @@ export function CommentList({
                         size="icon-xs"
                         aria-label={t("deleteComment")}
                         onClick={() => void remove(comment)}
-                        className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+                        className="pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-visible:opacity-100"
                       >
                         <Trash aria-hidden />
                       </Button>
@@ -224,7 +224,7 @@ export function CommentList({
                     return next;
                   })
                 }
-                className="ms-11 h-auto self-start p-0 text-xs text-muted-foreground before:me-3 before:inline-block before:h-px before:w-6 before:bg-border"
+                className="ms-11 h-auto self-start p-0 text-muted-foreground before:me-3 before:inline-block before:h-px before:w-6 before:bg-border"
               >
                 {showReplies
                   ? t("hideReplies")
@@ -332,7 +332,7 @@ export function CommentBox({
           maxLength={COMMENT_MAX}
           aria-label={reply ? t("writeReply") : t("addComment")}
           placeholder={`${reply ? t("writeReply") : t("addComment")}…`}
-          className="field-sizing-content max-h-32 min-h-8 min-w-0 flex-1 resize-none bg-transparent! py-1.5 focus-visible:ring-0 focus-visible:border-none focus-visible:outline-none text-base outline-none ring-none border-none placeholder:text-muted-foreground md:text-sm"
+          className="max-h-32 min-h-8 min-w-0 flex-1 resize-none border-none bg-transparent! py-1.5 focus-visible:ring-0"
         />
         {text.trim() && (
           <Button

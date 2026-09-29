@@ -160,9 +160,6 @@ const unreadWhere = (userId: string) =>
       and(eq(notifications.userId, userId), eq(notifications.read, false)),
     );
 
-export const unreadCount = (userId: string) =>
-  unreadWhere(userId).then(([row]) => row?.n ?? 0);
-
 /** One notification, opened by its owner. */
 export const markRead = (userId: string, id: string) =>
   db

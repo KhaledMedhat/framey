@@ -104,16 +104,17 @@ export function PeoplePicker({
       <div className="flex flex-wrap items-center gap-1.5 border-b px-4 py-2">
         <span className="text-sm font-semibold">{t("to")}</span>
         {selected.map((target) => (
-          <button
+          <Button
             key={target.key}
-            type="button"
+            variant="secondary"
+            size="xs"
             onClick={() => onToggle(target)}
             aria-label={t("removeTarget", { name: target.label })}
-            className="flex h-7 items-center gap-1 rounded-full bg-muted px-2.5 text-xs font-semibold hover:bg-muted/70"
+            className="h-7 rounded-full px-2.5 font-semibold"
           >
             {target.label}
-            <X aria-hidden className="size-3" />
-          </button>
+            <X aria-hidden />
+          </Button>
         ))}
         <input
           type="search"

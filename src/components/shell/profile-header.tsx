@@ -189,7 +189,7 @@ function FollowCount({
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t("search")}
               aria-label={t("search")}
-              className="h-10 rounded-lg ps-10"
+              className="rounded-lg ps-10"
             />
           </div>
           <div className="max-h-[min(65svh,32rem)] min-h-48 overflow-y-auto p-2">
@@ -493,7 +493,7 @@ export default function ProfileHeader({
                         render={
                           <Button
                             variant="link"
-                            className="h-auto shrink-0 p-0 font-semibold text-blue-500"
+                            className="h-auto p-0 font-semibold text-blue-500"
                           />
                         }
                       >

@@ -278,35 +278,38 @@ export default function FeedPost({
               }
             ></DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 p-1.5">
+              <DropdownMenuItem
+                className="h-10 gap-3 px-3"
+                render={<Link href={`/p/${post.id}`} />}
+              >
+                <ArrowRight
+                  aria-hidden
+                  size={20}
+                  className="rtl:rotate-180"
+                />
+                {t("goToPost")}
+              </DropdownMenuItem>
               {!isMine && (
+                <DropdownMenuItem
+                  variant={follow === "none" ? "default" : "destructive"}
+                  onClick={() => void toggleFollow()}
+                  className="h-10 gap-3 px-3"
+                >
+                  {follow === "none" ? (
+                    <UserAdd aria-hidden size={20} />
+                  ) : (
+                    <UserMinus aria-hidden size={20} />
+                  )}
+                  {follow === "following"
+                    ? t("unfollow")
+                    : follow === "requested"
+                      ? t("withdrawRequest")
+                      : t("follow")}
+                </DropdownMenuItem>
+              )}
+              {/* An archived post is only visible to its author: nothing to share. */}
+              {!post.archived && (
                 <>
-                  <DropdownMenuItem
-                    className="h-10 gap-3 px-3"
-                    render={<Link href={`/p/${post.id}`} />}
-                  >
-                    <ArrowRight
-                      aria-hidden
-                      size={20}
-                      className="rtl:rotate-180"
-                    />
-                    {t("goToPost")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    variant={follow === "none" ? "default" : "destructive"}
-                    onClick={() => void toggleFollow()}
-                    className="h-10 gap-3 px-3"
-                  >
-                    {follow === "none" ? (
-                      <UserAdd aria-hidden size={20} />
-                    ) : (
-                      <UserMinus aria-hidden size={20} />
-                    )}
-                    {follow === "following"
-                      ? t("unfollow")
-                      : follow === "requested"
-                        ? t("withdrawRequest")
-                        : t("follow")}
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setShareOpen(true)}
                     className="h-10 gap-3 px-3"
@@ -723,7 +726,7 @@ export default function FeedPost({
                   <Button
                     variant="link"
                     onClick={() => setExpanded(true)}
-                    className="h-auto p-0 text-sm font-normal text-muted-foreground hover:text-foreground hover:no-underline"
+                    className="h-auto p-0 font-normal text-muted-foreground hover:text-foreground hover:no-underline"
                   >
                     {t("more").toLowerCase()}
                   </Button>
@@ -747,7 +750,7 @@ export default function FeedPost({
                   <Button
                     variant="link"
                     onClick={onOpen}
-                    className="h-auto self-start p-0 text-sm font-normal text-muted-foreground hover:text-foreground"
+                    className="h-auto self-start p-0 font-normal text-muted-foreground hover:text-foreground"
                   >
                     {t("showAllComments", {
                       n: commentCount.toLocaleString(lang),

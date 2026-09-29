@@ -234,6 +234,21 @@ export async function getFeedPage(
     .from(posts)
     .where(
       and(
+        // Same rows as `feedAt is not null`, but indexable: without it every
+        // public post on the site is scored on each feed load.
+        or(
+          eq(posts.authorId, viewerId),
+          inArray(posts.authorId, followed),
+          inArray(
+            posts.id,
+            db
+              .select({ id: postReposts.postId })
+              .from(postReposts)
+              .where(
+                or(eq(postReposts.userId, viewerId), inArray(postReposts.userId, followed)),
+              ),
+          ),
+        ),
         visibleTo(viewerId),
         isNull(posts.archivedAt),
         sql`${feedAt} is not null`,

@@ -41,7 +41,12 @@ async function state(userId: string, postId: string) {
     db
       .select({ id: savedCollectionPosts.collectionId })
       .from(savedCollectionPosts)
-      .where(eq(savedCollectionPosts.postId, postId)),
+      .where(
+        and(
+          eq(savedCollectionPosts.postId, postId),
+          inArray(savedCollectionPosts.collectionId, mine(userId)),
+        ),
+      ),
   ]);
   const inside = new Set(holding.map((h) => h.id));
   return {
