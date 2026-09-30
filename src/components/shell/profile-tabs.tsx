@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Add,
   Bookmark,
@@ -73,6 +73,7 @@ export default function ProfileTabs({
   const t = useT();
   const lang = useLang();
   // null: the collection tiles; ALL or a collection id: that grid.
+  const tab = useSearchParams().get("tab");
   const [openId, setOpenId] = useState<string | null>(null);
   const [naming, setNaming] = useState(false);
   const [newName, setNewName] = useState("");
@@ -116,7 +117,13 @@ export default function ProfileTabs({
   };
 
   return (
-    <Tabs defaultValue="posts" className="mt-6 gap-0 md:mt-8">
+    // `?tab=saved` (the nav's Saved link) opens that tab; keyed so following
+    // the link while already on the profile switches to it too.
+    <Tabs
+      key={tab}
+      defaultValue={tab === "saved" && saved ? "saved" : "posts"}
+      className="mt-6 gap-0 md:mt-8"
+    >
       <TabsList
         variant="line"
         className="h-12 w-full justify-center gap-10 rounded-none border-b p-0 md:gap-16"

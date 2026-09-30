@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -57,7 +58,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useChatEvents } from "./chat";
 import { NotificationsSheet, useNotifications } from "./notifications";
 import { CREATE_STORY_EVENT, StoryTextStep } from "./stories";
-import FrameyMark from "./framey-mark";
 import SharePost, { SHARE_POST_FORM_ID } from "./share-post";
 import { SwitchAccountDialog } from "./switch-account";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -205,7 +205,21 @@ export default function Nav({
           aria-label={t("frameyHome")}
           className="flex size-11 items-center justify-center rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
         >
-          <FrameyMark className="size-8 text-foreground" />
+          {/* CSS picks the logo, so it's right on first paint in either theme. */}
+          <Image
+            src="/framey_black.png"
+            alt=""
+            width={100}
+            height={100}
+            className="h-auto w-8 dark:hidden"
+          />
+          <Image
+            src="/framey_white.png"
+            alt=""
+            width={100}
+            height={100}
+            className="hidden h-auto w-8 dark:block"
+          />
         </Link>
 
         <ul className="flex flex-col gap-2">
@@ -353,7 +367,7 @@ export default function Nav({
               [
                 { href: "/settings/edit-profile", label: "settings", icon: Setting2 },
                 { href: "/your-activity", label: "yourActivity", icon: Activity },
-                { href: "/saved", label: "saved", icon: Bookmark2 },
+                { href: `/${username}?tab=saved`, label: "saved", icon: Bookmark2 },
               ] satisfies Item[]
             ).map(({ href, label, icon: Icon }) => (
               <DropdownMenuItem
@@ -490,7 +504,7 @@ export default function Nav({
               [
                 { href: "/settings", label: "settings", icon: Setting2 },
                 { href: "/your-activity", label: "yourActivity", icon: Activity },
-                { href: "/saved", label: "saved", icon: Bookmark2 },
+                { href: `/${username}?tab=saved`, label: "saved", icon: Bookmark2 },
               ] satisfies Item[]
             ).map(({ href, label, icon: Icon }) => (
               <DropdownMenuItem
