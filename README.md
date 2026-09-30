@@ -47,60 +47,6 @@ A full-stack, Instagram-style social app: share photos and short videos, edit th
 | Real-time | Pusher |
 | Rate limiting | Upstash Redis |
 
-## Getting started
-
-```bash
-git clone https://github.com/KhaledMedhat/framey.git
-cd framey
-pnpm install
-```
-
-Create a `.env` file in the project root:
-
-```env
-AUTH_SECRET=              # generate with: npx auth secret
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-DATABASE_URL=             # Neon Postgres connection string
-UPLOADTHING_TOKEN=
-PUSHER_APP_ID=
-NEXT_PUBLIC_PUSHER_KEY=
-PUSHER_SECRET=
-NEXT_PUBLIC_PUSHER_CLUSTER=
-GIPHY_API_KEY=
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
-```
-
-Push the schema and start the dev server:
-
-```bash
-pnpm db:push
-pnpm dev
-```
-
-Then open [http://localhost:3000](http://localhost:3000).
-
-## Scripts
-
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the dev server |
-| `pnpm build` / `pnpm start` | Build and run for production |
-| `pnpm lint` | Run ESLint |
-| `pnpm db:push` | Sync the Drizzle schema to the database |
-| `pnpm db:generate` / `pnpm db:migrate` | Generate and apply migrations |
-| `pnpm db:studio` | Open Drizzle Studio |
-| `pnpm db:seed:feed` | Seed sample feed data |
-
-## Deployment
-
-Framey is deployed on [Vercel](https://framey-lac.vercel.app/). To deploy your own copy:
-
-1. Import the repository into Vercel.
-2. Add the environment variables listed above.
-3. Add `https://<your-domain>/api/auth/callback/google` as an authorized redirect URI in Google Cloud Console.
-
 ## Author
 
 **Khaled Medhat**: [GitHub](https://github.com/KhaledMedhat)
